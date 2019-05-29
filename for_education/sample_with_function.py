@@ -3,7 +3,7 @@
 ------------------------
 sample_with_function.py
 ------------------------
-- 数値計算を実行する関数を直接呼び出すプログラムの例
+- 数値計算を実行する関数linprogを直接呼び出すプログラムの例
 - scipy.optimizeの関数linprog(線形計画法を解く関数)を直接利用
 - linprogの使い方: https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html
 """
