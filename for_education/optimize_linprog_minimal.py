@@ -1,23 +1,37 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 26 16:03:14 2019
-@author: hoshino
-scipy.optimizeのlinprogを扱いやすくするためのプログラム
+----------------------------
+optimize_linprog_minimal.py
+----------------------------
+- scipy.optimizeの関数linprogを扱いやすくするためのクラス定義を行うコード
+- このファイルのコードはsample_with_object.pyが動作するための最小限の要素のみを含んでいます
+- sample_with_object.pyの動作を理解しやすいようシンプルな構成となっていますが, そのかわりにプログラムの信頼性を犠牲にしています
+- 信頼性について理解するためには, optimize_linprog_with_typecheck.pyやoptimize_linprog_with_unittest.pyを参照してください
+- これらを学び終えた後, linprogを使って数値計算をするときには, 下記URLにあるoptimize_linprog.pyを使ってください
+- https://github.com/hoshino06/ui_for_scipy
 """
+# scipy.optimizeを読み込んでoptという名前を付ける
 import scipy.optimize as opt
-import sympy as sym
 
 class LinearProg():
     '''
-    linprogの使い方:
+    --------------------
+    LinerProgクラスの定義
+    --------------------
+    - 関数linprogの引数となるデータを保持および成形する
+    - linprogの使い方:
         linprog(c, A_ub, b_ub, A_eq, b_eq, bounds, method, callback, options, x0)
         minimize: c @ x
         s.t.:
             A_ub @ x <= b_ub
             A_eq @ x == b_eq
             lb <= x <= ub
+    - 各部分に対するコメントはこれから適宜書き入れます!!
     '''
     def __init__(self):
+        '''
+        
+        '''
         self.x = set()
         self.c = []
         self.A_ub = []
@@ -30,8 +44,6 @@ class LinearProg():
             f_canonical = f
         elif min_or_max == 'max':
             f_canonical = -f
-        else:
-            raise TypeError()
         coeff = f_canonical.as_coefficients_dict()
         c = []
         for x_i in self.x:
@@ -41,10 +53,7 @@ class LinearProg():
                 c.append(0)
         self.c = c
     def append_inequality(self, g):
-        if isinstance(g, sym.LessThan):
-            g_canonical = g.lhs - g.rhs
-        else:
-            raise TypeError()
+        g_canonical = g.lhs - g.rhs
         coeff = g_canonical.as_coefficients_dict()
         a = []
         for x_i in self.x:
