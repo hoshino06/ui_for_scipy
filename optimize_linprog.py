@@ -9,7 +9,7 @@ import sympy as sym
 import unittest
 
 class LinearProg():
-    '''
+    """
     linprogの使い方:
         linprog(c, A_ub, b_ub, A_eq, b_eq, bounds, method, callback, options, x0)
         minimize: c @ x
@@ -17,14 +17,14 @@ class LinearProg():
             A_ub @ x <= b_ub
             A_eq @ x == b_eq
             lb <= x <= ub
-    '''
+    """
     def __init__(self, x=None):
         self.x = set()
         self.c = []
         self.A_ub = []
         self.b_ub = []
-        self.A_eq = None
-        self.b_eq = None
+        self.A_eq = []
+        self.b_eq = []
         self.bounds = {}
         self.method = 'interior-point'
         self.callback = None
@@ -35,6 +35,12 @@ class LinearProg():
     def set_decision_variables(self, x):
         self.x = x
     def append_decision_variables(self, x):
+        """
+        決定変数を追加するメソッド    
+        
+        :param x: 追加する決定変数
+        :type x: Symbol
+        """
         if isinstance(x, sym.Symbol):
             self.x.add(x)
         elif isinstance(x, tuple):
@@ -46,6 +52,12 @@ class LinearProg():
         else:
             raise TypeError()
     def set_cost_function(self, min_or_max, f):
+        """
+        費用関数を設定するメソッド    
+        
+        :param f: 追加する決定変数
+        :type f: Symbol
+        """
         if isinstance(f, sym.Expr):
             pass
         else:
@@ -82,6 +94,8 @@ class LinearProg():
     def append_equality(self, h):
         if isinstance(h, sym.Equality):
             h_canonical = h.lhs - h.rhs
+        elif isinstance(h, sym.Expr):
+            h_canonical = h
         else:
             raise TypeError()
         coeff = h_canonical.as_coefficients_dict()
@@ -93,7 +107,7 @@ class LinearProg():
                 a.append(0)
         b = -coeff[1]
         self.A_eq.append(a)
-        self.A_eq.append(b)
+        self.b_eq.append(b)
     def set_bound(self, x_i, lower, upper):
         self.bounds[x_i] = (lower, upper)
     def get_bounds(self):
@@ -138,7 +152,7 @@ class TestLinearProg(unittest.TestCase):
     def test_append_equality(self):
         x1, x2 = sym.symbols('x1, x2')
         prog = LinearProg([x1, x2])
-        prog.append_equality( 4*x1 + 3*x2 == 24 )
+        prog.append_equality( 4*x1 + 3*x2 - 24 )
         self.assertEqual(prog.A_eq, [[4, 3]])
         self.assertEqual(prog.b_eq, [24])        
     
