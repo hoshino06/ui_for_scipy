@@ -3,17 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ui_for_scipy's documentation!
+"ui_for_scipy"のドキュメント
 ========================================
+
+ui_for_scipyは, scipyの諸関数に対するユーザインタフェースを提供するパッケージです(鋭意作成中です). sympyが提供する代数計算の記述能力を活かして, 直感的に数値計算のコードを記述することを目的としています.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   ../optimize_linprog
+   usage
+   modules
 
 Indices and tables
-==================
+-------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

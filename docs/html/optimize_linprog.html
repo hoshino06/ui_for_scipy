@@ -36,12 +36,13 @@
             
   <div class="section" id="module-optimize_linprog">
 <span id="optimize-linprog-module"></span><h1>optimize_linprog module<a class="headerlink" href="#module-optimize_linprog" title="このヘッドラインへのパーマリンク">¶</a></h1>
-<p>Scipy.optimizeの関数linprogに対するAIP</p>
+<p>Scipy.optimizeの関数linprogに対するAPIを提供するモジュールです.</p>
 <dl class="class">
 <dt id="optimize_linprog.LinearProg">
 <em class="property">class </em><code class="descclassname">optimize_linprog.</code><code class="descname">LinearProg</code><span class="sig-paren">(</span><em>x=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#LinearProg"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.LinearProg" title="この定義へのパーマリンク">¶</a></dt>
 <dd><p>ベースクラス: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>線形計画問題を定式化するためのクラス. 関数linprogを用いて解く.</p>
+<p>線形計画問題を定式化するためのクラス.
+関数linprogに渡す引数のデータを保持.</p>
 <dl class="method">
 <dt id="optimize_linprog.LinearProg.append_decision_variables">
 <code class="descname">append_decision_variables</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#LinearProg.append_decision_variables"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.LinearProg.append_decision_variables" title="この定義へのパーマリンク">¶</a></dt>
@@ -59,17 +60,30 @@
 <dl class="method">
 <dt id="optimize_linprog.LinearProg.append_equality">
 <code class="descname">append_equality</code><span class="sig-paren">(</span><em>h</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#LinearProg.append_equality"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.LinearProg.append_equality" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
+<dd><p>等式制約を追加するメソッド</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">パラメータ:</th><td class="field-body"><strong>h</strong> (<em>Equality</em><em> or </em><em>Expr</em>) -- 追加する等式制約</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="optimize_linprog.LinearProg.append_inequality">
 <code class="descname">append_inequality</code><span class="sig-paren">(</span><em>g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#LinearProg.append_inequality"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.LinearProg.append_inequality" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="optimize_linprog.LinearProg.get_bounds">
-<code class="descname">get_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#LinearProg.get_bounds"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.LinearProg.get_bounds" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
+<dd><p>不等式制約を追加するメソッド</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">パラメータ:</th><td class="field-body"><strong>g</strong> (<em>Symbol</em>) -- 追加する不等式</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="optimize_linprog.LinearProg.get_result">
@@ -80,7 +94,8 @@
 <dl class="method">
 <dt id="optimize_linprog.LinearProg.set_bound">
 <code class="descname">set_bound</code><span class="sig-paren">(</span><em>x_i</em>, <em>lower</em>, <em>upper</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#LinearProg.set_bound"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.LinearProg.set_bound" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
+<dd><p>変数の上下限制約を追加するメソッド</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="optimize_linprog.LinearProg.set_cost_function">
@@ -109,42 +124,6 @@
 </tbody>
 </table>
 </dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="optimize_linprog.TestLinearProg">
-<em class="property">class </em><code class="descclassname">optimize_linprog.</code><code class="descname">TestLinearProg</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#TestLinearProg"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.TestLinearProg" title="この定義へのパーマリンク">¶</a></dt>
-<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
-<dl class="method">
-<dt id="optimize_linprog.TestLinearProg.sample_result">
-<code class="descname">sample_result</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#TestLinearProg.sample_result"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.TestLinearProg.sample_result" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="optimize_linprog.TestLinearProg.test_append_decision_variables">
-<code class="descname">test_append_decision_variables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#TestLinearProg.test_append_decision_variables"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.TestLinearProg.test_append_decision_variables" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="optimize_linprog.TestLinearProg.test_append_equality">
-<code class="descname">test_append_equality</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#TestLinearProg.test_append_equality"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.TestLinearProg.test_append_equality" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="optimize_linprog.TestLinearProg.test_append_inequality">
-<code class="descname">test_append_inequality</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#TestLinearProg.test_append_inequality"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.TestLinearProg.test_append_inequality" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="optimize_linprog.TestLinearProg.test_optimization">
-<code class="descname">test_optimization</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#TestLinearProg.test_optimization"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.TestLinearProg.test_optimization" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="optimize_linprog.TestLinearProg.test_set_cost_function">
-<code class="descname">test_set_cost_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#TestLinearProg.test_set_cost_function"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.TestLinearProg.test_set_cost_function" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
