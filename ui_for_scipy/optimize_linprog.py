@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Scipy.optimizeの関数linprogに対するAIP
+Scipy.optimizeの関数linprogに対するAPIを提供するモジュールです. 
 """
 import scipy.optimize as opt
 import sympy as sym
@@ -8,9 +8,22 @@ import unittest
 
 class LinearProg():
     """
-    線形計画問題を定式化するためのクラス. 関数linprogを用いて解く. 
+    線形計画問題を定式化するためのクラス. 
+    関数linprogに渡す引数のデータを保持. 
     """
     def __init__(self, x=None):
+        """
+        linprogの引数一覧:
+            linprog(c, A_ub, b_ub, A_eq, b_eq, bounds, method, callback, options, x0) 
+        c:
+            評価関数 f = c.x の係数c
+        A_bu, b_ub:
+            不等式制約 A_ub.x <= b_ub の係数
+        A_eq, b_eq:
+            等式制約 A_eq.x == b_eq の係数
+        bounds:    
+            変数の上下限(lb <= x <= ub)
+        """
         self.x = set()
         self.c = []
         self.A_ub = []
@@ -24,6 +37,7 @@ class LinearProg():
         self.x0 = None
         if x:
             self.x = x
+            
     def set_decision_variables(self, x):
         """
         決定変数を設定するメソッド    
@@ -32,6 +46,7 @@ class LinearProg():
         :type x: Symbol
         """
         self.x = x
+        
     def append_decision_variables(self, x):
         """
         決定変数を追加するメソッド    
@@ -49,6 +64,7 @@ class LinearProg():
                     raise TypeError()
         else:
             raise TypeError()
+            
     def set_cost_function(self, min_or_max, f):
         """
         費用関数を設定するメソッド    
@@ -75,6 +91,12 @@ class LinearProg():
                 c.append(0)
         self.c = c
     def append_inequality(self, g):
+        """
+        不等式制約を追加するメソッド    
+        
+        :param g: 追加する不等式
+        :type g: Symbol
+        """
         if isinstance(g, sym.LessThan):
             g_canonical = g.lhs - g.rhs
         else:
@@ -90,6 +112,12 @@ class LinearProg():
         self.A_ub.append(a)
         self.b_ub.append(b)
     def append_equality(self, h):
+        """
+        等式制約を追加するメソッド    
+        
+        :param h: 追加する等式制約
+        :type h: Equality or Expr
+        """
         if isinstance(h, sym.Equality):
             h_canonical = h.lhs - h.rhs
         elif isinstance(h, sym.Expr):
@@ -107,8 +135,15 @@ class LinearProg():
         self.A_eq.append(a)
         self.b_eq.append(b)
     def set_bound(self, x_i, lower, upper):
+        """
+        ある変数x_iの上下限制約を設定するメソッド    
+        """
         self.bounds[x_i] = (lower, upper)
-    def get_bounds(self):
+        
+    def _get_bounds(self):
+        """
+        変数の上下限制約をすべてまとめるメソッド    
+        """
         bounds = []
         for x_i in self.x:
             bound_for_xi = self.bounds.get(x_i, (None, None))
@@ -119,24 +154,12 @@ class LinearProg():
         """
         res = opt.linprog(c=self.c, 
                           A_ub=self.A_ub, b_ub=self.b_ub, 
-                          bounds=self.get_bounds()
+                          bounds=self._get_bounds()
                           )
-        """
-        linprogの引数:
-            linprog(c, A_ub, b_ub, A_eq, b_eq, bounds, method, callback, options, x0) 
-        c:
-            評価関数 f = c.x の係数c
-        A_bu, b_ub:
-            不等式制約 A_ub.x <= b_ub の係数
-        A_eq, b_eq:
-            等式制約 A_eq.x == b_eq の係数
-        bounds:    
-            変数の上下限(lb <= x <= ub)
-        """
         return res
 
 
-class TestLinearProg(unittest.TestCase):
+class _TestLinearProg(unittest.TestCase):
 
     def test_append_decision_variables(self):
         prog = LinearProg()

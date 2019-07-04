@@ -73,6 +73,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">x</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+            
 <div class="viewcode-block" id="LinearProg.set_decision_variables"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.set_decision_variables">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_decision_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        決定変数を設定するメソッド    </span>
@@ -81,6 +82,7 @@
 <span class="sd">        :type x: Symbol</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span></div>
+        
 <div class="viewcode-block" id="LinearProg.append_decision_variables"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.append_decision_variables">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">append_decision_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        決定変数を追加するメソッド    </span>
@@ -98,6 +100,7 @@
                     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span></div>
+            
 <div class="viewcode-block" id="LinearProg.set_cost_function"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.set_cost_function">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_cost_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_or_max</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        費用関数を設定するメソッド    </span>
@@ -169,10 +172,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">b_eq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span></div>
 <div class="viewcode-block" id="LinearProg.set_bound"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.set_bound">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_i</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        変数の上下限制約を追加するメソッド    </span>
+<span class="sd">        ある変数x_iの上下限制約を設定するメソッド    </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="n">x_i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span></div>
+        
     <span class="k">def</span> <span class="nf">_get_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        変数の上下限制約をすべてまとめるメソッド    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span>
             <span class="n">bound_for_xi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x_i</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
