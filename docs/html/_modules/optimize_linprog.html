@@ -36,13 +36,14 @@
   <h1>optimize_linprog のソースコード</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Scipy.optimizeの関数linprogに対するAPIを提供するモジュールです. </span>
+<span class="sd">関数 :py:func:`scipy:scipy.optimize.linprog` に対するAPIを提供するモジュールです. </span>
+<span class="sd">下記の :py:class:`LinearProg` クラスを使用してください. </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">opt</span>
 <span class="kn">import</span> <span class="nn">sympy</span> <span class="k">as</span> <span class="nn">sym</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
 
-<div class="viewcode-block" id="LinearProg"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg">[ドキュメント]</a><span class="k">class</span> <span class="nc">LinearProg</span><span class="p">():</span>
+<div class="viewcode-block" id="LinearProg"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg">[ドキュメント]</a><span class="k">class</span> <span class="nc">LinearProg</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    線形計画問題を定式化するためのクラス. </span>
 <span class="sd">    関数linprogに渡す引数のデータを保持. </span>
@@ -76,19 +77,26 @@
             
 <div class="viewcode-block" id="LinearProg.set_decision_variables"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.set_decision_variables">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_decision_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        決定変数を設定するメソッド    </span>
+<span class="sd">        :param x: 設定する決定変数のタプル</span>
+<span class="sd">        :type x: :py:class:`tuple`</span>
 <span class="sd">        </span>
-<span class="sd">        :param x: 追加する決定変数</span>
-<span class="sd">        :type x: Symbol</span>
+<span class="sd">        決定変数を設定するメソッドです. </span>
+<span class="sd">        引数には, </span>
+<span class="sd">        :py:class:`Symbol &lt;sympy:sympy.core.symbol.Symbol&gt;` オブジェクトを</span>
+<span class="sd">        要素に持つタプルを与えてください. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="LinearProg.append_decision_variables"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.append_decision_variables">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">append_decision_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        決定変数を追加するメソッド    </span>
-<span class="sd">        </span>
-<span class="sd">        :param x: 追加する決定変数</span>
-<span class="sd">        :type x: Symbol</span>
+<span class="sd">        :arg x: 追加する決定変数</span>
+<span class="sd">        :type x: :py:class:`Symbol &lt;sympy:sympy.core.symbol.Symbol&gt;` or </span>
+<span class="sd">                 :py:class:`tuple`</span>
+
+<span class="sd">        決定変数を追加するためのメソッドです. </span>
+<span class="sd">        引数として, Symbolsクラスのオブジェクト, またはそれらを要素に持つtupleを与えてください.</span>
+<span class="sd">        なお, 元々設定されている決定変数を上書きする場合には, </span>
+<span class="sd">        :py:meth:`set_decision_variables` を使用してください. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">Symbol</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -103,10 +111,15 @@
             
 <div class="viewcode-block" id="LinearProg.set_cost_function"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.set_cost_function">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_cost_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_or_max</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        費用関数を設定するメソッド    </span>
+<span class="sd">        :param min_or_max: 最適化の目的(最小化or最大化)</span>
+<span class="sd">        :type min_or_max: :py:class:`str`</span>
+<span class="sd">        :param f: 評価関数</span>
+<span class="sd">        :type f: :py:class:`Expr &lt;sympy:sympy.core.expr.Expr&gt;`</span>
 <span class="sd">        </span>
-<span class="sd">        :param f: 追加する決定変数</span>
-<span class="sd">        :type f: Symbol</span>
+<span class="sd">        費用関数を設定するメソッドです. </span>
+<span class="sd">        引数min_or_maxには, &quot;min&quot;または&quot;max&quot;のいずれかを指定してください. </span>
+<span class="sd">        引数fには, 評価関数を表す :py:class:`Expr &lt;sympy:sympy.core.expr.Expr&gt;` オブジェクトを</span>
+<span class="sd">        与えてください. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">Expr</span><span class="p">):</span>
             <span class="k">pass</span>
@@ -128,10 +141,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span></div>
 <div class="viewcode-block" id="LinearProg.append_inequality"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.append_inequality">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">append_inequality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        不等式制約を追加するメソッド    </span>
+<span class="sd">        :param g: 追加する不等式制約</span>
+<span class="sd">        :type g: :py:class:`LessThan &lt;sympy:sympy.core.relational.LessThan&gt;`</span>
 <span class="sd">        </span>
-<span class="sd">        :param g: 追加する不等式</span>
-<span class="sd">        :type g: Symbol</span>
+<span class="sd">        不等式制約を追加するメソッドです. </span>
+<span class="sd">        引数として, 不等式制約を直接表す</span>
+<span class="sd">        :py:class:`LessThan &lt;sympy:sympy.core.relational.LessThan&gt;`</span>
+<span class="sd">        を与えてください. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">LessThan</span><span class="p">):</span>
             <span class="n">g_canonical</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">lhs</span> <span class="o">-</span> <span class="n">g</span><span class="o">.</span><span class="n">rhs</span>
@@ -149,10 +165,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">b_ub</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span></div>
 <div class="viewcode-block" id="LinearProg.append_equality"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.append_equality">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">append_equality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        等式制約を追加するメソッド    </span>
-<span class="sd">        </span>
 <span class="sd">        :param h: 追加する等式制約</span>
-<span class="sd">        :type h: Equality or Expr</span>
+<span class="sd">        :type h: :py:class:`Expr &lt;sympy:sympy.core.expr.Expr&gt;` or </span>
+<span class="sd">                 :py:class:`Equality &lt;sympy:sympy.core.relational.Equality&gt;`</span>
+<span class="sd">        </span>
+<span class="sd">        等式制約を追加するためのメソッドです. </span>
+<span class="sd">        引数には,  </span>
+<span class="sd">        等式制約h(x)=0の左辺を表す :py:class:`Expr &lt;sympy:sympy.core.expr.Expr&gt;` オブジェクト, </span>
+<span class="sd">        または等式制約を直接表す :py:class:`Equality &lt;sympy:sympy.core.relational.Equality&gt;` オブジェクトを与えてください. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">Equality</span><span class="p">):</span>
             <span class="n">h_canonical</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">lhs</span> <span class="o">-</span> <span class="n">h</span><span class="o">.</span><span class="n">rhs</span>
@@ -172,21 +192,31 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">b_eq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span></div>
 <div class="viewcode-block" id="LinearProg.set_bound"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.set_bound">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_i</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        ある変数x_iの上下限制約を設定するメソッド    </span>
+<span class="sd">        :param x_i: 上下限制約を追加する決定変数</span>
+<span class="sd">        :param lower: 下限</span>
+<span class="sd">        :param upper: 上限</span>
+<span class="sd">        :type x_i: :py:class:`Symbol &lt;sympy:sympy.core.symbol.Symbol&gt;`</span>
+<span class="sd">        </span>
+<span class="sd">        ある変数x_iの上下限制約を設定するメソッドです. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="n">x_i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span></div>
         
     <span class="k">def</span> <span class="nf">_get_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        変数の上下限制約をすべてまとめるメソッド    </span>
+<span class="sd">        変数の上下限制約をすべてまとめるメソッドです.   </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span>
             <span class="n">bound_for_xi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x_i</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
             <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bound_for_xi</span><span class="p">)</span>
+            
 <div class="viewcode-block" id="LinearProg.get_result"><a class="viewcode-back" href="../optimize_linprog.html#optimize_linprog.LinearProg.get_result">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        最適化問題の解を得るメソッド</span>
+<span class="sd">        :return: optimal solution</span>
+<span class="sd">        :rtype:  :py:class:`scipy:scipy.optimize.OptimizeResult`</span>
+<span class="sd">        </span>
+<span class="sd">        最適化問題の解を得るメソッドです. </span>
+<span class="sd">        linprog関数を呼び出して, 最適化問題の解を返します. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">linprog</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> 
                           <span class="n">A_ub</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">A_ub</span><span class="p">,</span> <span class="n">b_ub</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b_ub</span><span class="p">,</span> 

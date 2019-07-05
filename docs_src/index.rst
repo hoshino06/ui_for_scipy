@@ -15,6 +15,9 @@ ui_for_scipyは, scipyの諸関数に対するユーザインタフェースを�
    usage
    modules
 
+
+:ref:`sympy:Symbols`
+     
 Indices and tables
 -------------------
 

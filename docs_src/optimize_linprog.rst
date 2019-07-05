@@ -1,5 +1,5 @@
-optimize\_linprog module
-========================
+optimize\_linprog モジュール
+==============================
 
 .. automodule:: optimize_linprog
     :members:

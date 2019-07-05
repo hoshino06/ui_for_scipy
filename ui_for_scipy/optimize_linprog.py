@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Scipy.optimizeの関数linprogに対するAPIを提供するモジュールです. 
+関数 :py:func:`scipy:scipy.optimize.linprog` に対するAPIを提供するモジュールです. 
+下記の :py:class:`LinearProg` クラスを使用してください. 
 """
 import scipy.optimize as opt
 import sympy as sym
 import unittest
 
-class LinearProg():
+class LinearProg:
     """
     線形計画問題を定式化するためのクラス. 
     関数linprogに渡す引数のデータを保持. 
@@ -40,19 +41,26 @@ class LinearProg():
             
     def set_decision_variables(self, x):
         """
-        決定変数を設定するメソッド    
+        :param x: 設定する決定変数のタプル
+        :type x: :py:class:`tuple`
         
-        :param x: 追加する決定変数
-        :type x: Symbol
+        決定変数を設定するメソッドです. 
+        引数には, 
+        :py:class:`Symbol <sympy:sympy.core.symbol.Symbol>` オブジェクトを
+        要素に持つタプルを与えてください. 
         """
-        self.x = x
+        self.x = set(x)
         
     def append_decision_variables(self, x):
         """
-        決定変数を追加するメソッド    
-        
-        :param x: 追加する決定変数
-        :type x: Symbol
+        :arg x: 追加する決定変数
+        :type x: :py:class:`Symbol <sympy:sympy.core.symbol.Symbol>` or 
+                 :py:class:`tuple`
+
+        決定変数を追加するためのメソッドです. 
+        引数として, Symbolsクラスのオブジェクト, またはそれらを要素に持つtupleを与えてください.
+        なお, 元々設定されている決定変数を上書きする場合には, 
+        :py:meth:`set_decision_variables` を使用してください. 
         """
         if isinstance(x, sym.Symbol):
             self.x.add(x)
@@ -67,10 +75,15 @@ class LinearProg():
             
     def set_cost_function(self, min_or_max, f):
         """
-        費用関数を設定するメソッド    
+        :param min_or_max: 最適化の目的(最小化or最大化)
+        :type min_or_max: :py:class:`str`
+        :param f: 評価関数
+        :type f: :py:class:`Expr <sympy:sympy.core.expr.Expr>`
         
-        :param f: 追加する決定変数
-        :type f: Symbol
+        費用関数を設定するメソッドです. 
+        引数min_or_maxには, "min"または"max"のいずれかを指定してください. 
+        引数fには, 評価関数を表す :py:class:`Expr <sympy:sympy.core.expr.Expr>` オブジェクトを
+        与えてください. 
         """
         if isinstance(f, sym.Expr):
             pass
@@ -92,10 +105,13 @@ class LinearProg():
         self.c = c
     def append_inequality(self, g):
         """
-        不等式制約を追加するメソッド    
+        :param g: 追加する不等式制約
+        :type g: :py:class:`LessThan <sympy:sympy.core.relational.LessThan>`
         
-        :param g: 追加する不等式
-        :type g: Symbol
+        不等式制約を追加するメソッドです. 
+        引数として, 不等式制約を直接表す
+        :py:class:`LessThan <sympy:sympy.core.relational.LessThan>`
+        を与えてください. 
         """
         if isinstance(g, sym.LessThan):
             g_canonical = g.lhs - g.rhs
@@ -113,10 +129,14 @@ class LinearProg():
         self.b_ub.append(b)
     def append_equality(self, h):
         """
-        等式制約を追加するメソッド    
-        
         :param h: 追加する等式制約
-        :type h: Equality or Expr
+        :type h: :py:class:`Expr <sympy:sympy.core.expr.Expr>` or 
+                 :py:class:`Equality <sympy:sympy.core.relational.Equality>`
+        
+        等式制約を追加するためのメソッドです. 
+        引数には,  
+        等式制約h(x)=0の左辺を表す :py:class:`Expr <sympy:sympy.core.expr.Expr>` オブジェクト, 
+        または等式制約を直接表す :py:class:`Equality <sympy:sympy.core.relational.Equality>` オブジェクトを与えてください. 
         """
         if isinstance(h, sym.Equality):
             h_canonical = h.lhs - h.rhs
@@ -136,21 +156,31 @@ class LinearProg():
         self.b_eq.append(b)
     def set_bound(self, x_i, lower, upper):
         """
-        ある変数x_iの上下限制約を設定するメソッド    
+        :param x_i: 上下限制約を追加する決定変数
+        :param lower: 下限
+        :param upper: 上限
+        :type x_i: :py:class:`Symbol <sympy:sympy.core.symbol.Symbol>`
+        
+        ある変数x_iの上下限制約を設定するメソッドです. 
         """
         self.bounds[x_i] = (lower, upper)
         
     def _get_bounds(self):
         """
-        変数の上下限制約をすべてまとめるメソッド    
+        変数の上下限制約をすべてまとめるメソッドです.   
         """
         bounds = []
         for x_i in self.x:
             bound_for_xi = self.bounds.get(x_i, (None, None))
             bounds.append(bound_for_xi)
+            
     def get_result(self): 
         """
-        最適化問題の解を得るメソッド
+        :return: optimal solution
+        :rtype:  :py:class:`scipy:scipy.optimize.OptimizeResult`
+        
+        最適化問題の解を得るメソッドです. 
+        linprog関数を呼び出して, 最適化問題の解を返します. 
         """
         res = opt.linprog(c=self.c, 
                           A_ub=self.A_ub, b_ub=self.b_ub, 
