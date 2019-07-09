@@ -1,0 +1,238 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>integrate_solve_ipv モジュール &#8212; ui_for_scipy  ドキュメント</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="optimize_linprog モジュール" href="optimize_linprog.html" />
+    <link rel="prev" title="モジュール一覧" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-integrate_solve_ivp">
+<span id="integrate-solve-ipv"></span><h1>integrate_solve_ipv モジュール<a class="headerlink" href="#module-integrate_solve_ivp" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>関数 <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> に対するAPIを提供するモジュールです.
+初期値問題を解く場合には, <a class="reference internal" href="#integrate_solve_ivp.InitialValueProb" title="integrate_solve_ivp.InitialValueProb"><code class="xref py py-class docutils literal notranslate"><span class="pre">InitialValueProb</span></code></a> を利用してください.
+また, integrate.solve_ivpに与える関数のみを得る場合には
+<a class="reference internal" href="#integrate_solve_ivp.Vectorfield" title="integrate_solve_ivp.Vectorfield"><code class="xref py py-class docutils literal notranslate"><span class="pre">Vectorfield</span></code></a> を利用してください.</p>
+<dl class="class">
+<dt id="integrate_solve_ivp.InitialValueProb">
+<em class="property">class </em><code class="descclassname">integrate_solve_ivp.</code><code class="descname">InitialValueProb</code><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ベースクラス: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>常微分方程式の初期値問題を解くためのクラス</p>
+<dl class="method">
+<dt id="integrate_solve_ivp.InitialValueProb.get_solution">
+<code class="descname">get_solution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.get_solution"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.get_solution" title="この定義へのパーマリンク">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">戻り値:</th><td class="field-body">初期値問題の解</td>
+</tr>
+<tr class="field-even field"><th class="field-name">戻り値の型:</th><td class="field-body"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> の戻り値</td>
+</tr>
+</tbody>
+</table>
+<p>初期値問題の解を得るメソッドです.
+integrate.solve_ivp関数を呼び出して, その戻り値をそのまま返します.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="integrate_solve_ivp.InitialValueProb.set_dependent_variables">
+<code class="descname">set_dependent_variables</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.set_dependent_variables"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.set_dependent_variables" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>従属変数を読み込んで次元を設定</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="integrate_solve_ivp.InitialValueProb.set_derivative">
+<code class="descname">set_derivative</code><span class="sig-paren">(</span><em>dxdt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.set_derivative"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.set_derivative" title="この定義へのパーマリンク">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">パラメータ:</th><td class="field-body"><strong>dxdt</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) -- {x_i: f_i(x)}</td>
+</tr>
+</tbody>
+</table>
+<p>計算する微分方程式dot{x} = f(x,t)の右辺を設定</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="integrate_solve_ivp.InitialValueProb.set_initial_value">
+<code class="descname">set_initial_value</code><span class="sig-paren">(</span><em>y0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.set_initial_value"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.set_initial_value" title="この定義へのパーマリンク">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">パラメータ:</th><td class="field-body"><strong>y0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) -- 初期値</td>
+</tr>
+</tbody>
+</table>
+<p>初期値を設定するメソッドです.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="integrate_solve_ivp.InitialValueProb.set_sampling_times">
+<code class="descname">set_sampling_times</code><span class="sig-paren">(</span><em>t_eval</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.set_sampling_times"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.set_sampling_times" title="この定義へのパーマリンク">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="integrate_solve_ivp.InitialValueProb.set_time_span">
+<code class="descname">set_time_span</code><span class="sig-paren">(</span><em>init</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.set_time_span"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.set_time_span" title="この定義へのパーマリンク">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">パラメータ:</th><td class="field-body"><ul class="first last simple">
+<li><strong>init</strong> -- 始点</li>
+<li><strong>end</strong> -- 終点</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>独立変数の期間(t_span)を設定するメソッドです.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="integrate_solve_ivp.Vectorfield">
+<em class="property">class </em><code class="descclassname">integrate_solve_ivp.</code><code class="descname">Vectorfield</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#Vectorfield"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.Vectorfield" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ベースクラス: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>求解したい微分方程式のベクトル場を表す関数を生成するクラス.</p>
+<dl class="method">
+<dt id="integrate_solve_ivp.Vectorfield.get_function">
+<code class="descname">get_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#Vectorfield.get_function"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.Vectorfield.get_function" title="この定義へのパーマリンク">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">戻り値:</th><td class="field-body">ベクトル場を表す関数</td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.3.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">solve_ivp</span></code></a>
+の引数 fun を生成するためのメソッド</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="integrate_solve_ivp.Vectorfield.set_derivative">
+<code class="descname">set_derivative</code><span class="sig-paren">(</span><em>dxdt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#Vectorfield.set_derivative"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.Vectorfield.set_derivative" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>計算する微分方程式dot{x} = f(x,t)の右辺を設定</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="integrate_solve_ivp.pendurum_diff">
+<code class="descclassname">integrate_solve_ivp.</code><code class="descname">pendurum_diff</code><span class="sig-paren">(</span><em>t</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#pendurum_diff"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.pendurum_diff" title="この定義へのパーマリンク">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ui_for_scipy</a></h1>
+
+
+
+
+
+
+
+
+<h3>ナビゲーション</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">使い方</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">モジュール一覧</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">integrate_solve_ipv モジュール</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimize_linprog.html">optimize_linprog モジュール</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">モジュール一覧</a><ul>
+      <li>Previous: <a href="modules.html" title="前の章へ">モジュール一覧</a></li>
+      <li>Next: <a href="optimize_linprog.html" title="次の章へ">optimize_linprog モジュール</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Hikaru Hoshino.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/solve_ivp.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
