@@ -36,10 +36,44 @@
   <h1>integrate_solve_ivp のソースコード</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">関数 :py:func:`scipy:scipy.integrate.solve_ivp` に対するAPIを提供するモジュールです. </span>
-<span class="sd">初期値問題を解く場合には, :py:class:`InitialValueProb` を利用してください. </span>
-<span class="sd">また, integrate.solve_ivpに与える関数のみを得る場合には</span>
-<span class="sd">:py:class:`Vectorfield` を利用してください. </span>
+<span class="sd">これは常微分方程式の初期値問題を数値的に解くためのモジュールです. </span>
+
+<span class="sd">次式で表される問題の解を計算します::  </span>
+<span class="sd">    </span>
+<span class="sd">    dy / dt = f(t, y)</span>
+<span class="sd">    y(t0) = y0</span>
+
+<span class="sd">ただし, t は一次元の独立変数（時間など）, y(t) はn次元のベクトル値関数（状態）を表します. </span>
+<span class="sd">n次元のベクトル値関数  f(t, y) により常微分方程式（ベクトル場）が記述されます. </span>
+<span class="sd">初期値 y(t0)=y0 が与えられた際の微分方程式の近似解を計算します. </span>
+
+<span class="sd">本モジュールの :py:class:`InitialValueProb` クラスを利用して初期値問題を構成すれば, </span>
+<span class="sd">内部でScipyの関数 :py:func:`scipy:scipy.integrate.solve_ivp` が呼び出され,  </span>
+<span class="sd">数値解を得ることができます. </span>
+<span class="sd">なお, ベクトル場 f(t, y)のみを得たい場合には, :py:class:`Vectorfield` クラスを利用してください. </span>
+
+
+<span class="sd">:py:class:`InitialValueProb` クラスの使用例を以下に示します. </span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    import sympy as sym </span>
+<span class="sd">    from ui_for_scipy import InitialValueProb</span>
+<span class="sd">    ipv = InitialValueProb()</span>
+<span class="sd">    #状態変数の設定</span>
+<span class="sd">    x1,x2 = sym.symbols(&#39;x1,x2&#39;)</span>
+<span class="sd">    ipv.set_dependent_variables((x1,x2))</span>
+<span class="sd">    #ベクトル場の設定</span>
+<span class="sd">    dxdt = {x1: x2,</span>
+<span class="sd">            x2: -2*x1 }　</span>
+<span class="sd">    ipv.set_derivative(dxdt)</span>
+<span class="sd">    #初期値を設定</span>
+<span class="sd">    init = {x1: 1,</span>
+<span class="sd">            x2: 0 }</span>
+<span class="sd">    ipv.set_initial_value(init)</span>
+<span class="sd">    #数値解を計算</span>
+<span class="sd">    ipv.set_time_span(0,1)　</span>
+<span class="sd">    sol = ipv.get_solution()</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">sin</span>
@@ -67,6 +101,7 @@
 <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
 <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">pendurum_diff</span><span class="p">,</span> <span class="n">t_span</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">y0</span><span class="o">=</span><span class="p">[</span><span class="n">th1</span><span class="p">,</span><span class="n">w1</span><span class="p">])</span>
 <span class="c1"># ##############################</span>
+
 
 <div class="viewcode-block" id="Vectorfield"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.Vectorfield">[ドキュメント]</a><span class="k">class</span> <span class="nc">Vectorfield</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>

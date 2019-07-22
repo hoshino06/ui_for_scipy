@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-"ui_for_scipy"のドキュメント
+User Interace for Scipy
 ========================================
 
-ui_for_scipyは, scipyの諸関数に対するユーザインタフェースを提供するパッケージです(鋭意作成中です). sympyが提供する代数計算の記述能力を活かして, 直感的に数値計算のコードを記述することを目的としています.
+User Interface for Scipy(ui_for_scipy)は, scipyの諸関数に対するユーザインタフェースを提供するパッケージです(鋭意作成中です). sympyが提供する代数計算の記述能力を活かして, 直感的に数値計算のコードを記述することを目的としています.
 
 .. toctree::
    :maxdepth: 2

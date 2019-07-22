@@ -1,9 +1,43 @@
 # -*- coding: utf-8 -*-
 """
-関数 :py:func:`scipy:scipy.integrate.solve_ivp` に対するAPIを提供するモジュールです. 
-初期値問題を解く場合には, :py:class:`InitialValueProb` を利用してください. 
-また, integrate.solve_ivpに与える関数のみを得る場合には
-:py:class:`Vectorfield` を利用してください. 
+これは常微分方程式の初期値問題を数値的に解くためのモジュールです. 
+
+次式で表される問題の解を計算します::  
+    
+    dy / dt = f(t, y)
+    y(t0) = y0
+
+ただし, t は一次元の独立変数（時間など）, y(t) はn次元のベクトル値関数（状態）を表します. 
+n次元のベクトル値関数  f(t, y) により常微分方程式（ベクトル場）が記述されます. 
+初期値 y(t0)=y0 が与えられた際の微分方程式の近似解を計算します. 
+
+本モジュールの :py:class:`InitialValueProb` クラスを利用して初期値問題を構成すれば, 
+内部でScipyの関数 :py:func:`scipy:scipy.integrate.solve_ivp` が呼び出され,  
+数値解を得ることができます. 
+なお, ベクトル場 f(t, y)のみを得たい場合には, :py:class:`Vectorfield` クラスを利用してください. 
+
+
+:py:class:`InitialValueProb` クラスの使用例を以下に示します. 
+
+.. code-block:: python
+
+    import sympy as sym 
+    from ui_for_scipy import InitialValueProb
+    ipv = InitialValueProb()
+    #状態変数の設定
+    x1,x2 = sym.symbols('x1,x2')
+    ipv.set_dependent_variables((x1,x2))
+    #ベクトル場の設定
+    dxdt = {x1: x2,
+            x2: -2*x1 }　
+    ipv.set_derivative(dxdt)
+    #初期値を設定
+    init = {x1: 1,
+            x2: 0 }
+    ipv.set_initial_value(init)
+    #数値解を計算
+    ipv.set_time_span(0,1)　
+    sol = ipv.get_solution()
 """
 import numpy as np
 from numpy import sin
@@ -31,6 +65,7 @@ dt = 0.05
 t = np.arange(0.0, 25, dt)
 sol = solve_ivp(pendurum_diff, t_span=[0,10], y0=[th1,w1])
 # ##############################
+
 
 class Vectorfield:
     """

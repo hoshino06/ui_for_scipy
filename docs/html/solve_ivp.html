@@ -37,10 +37,39 @@
             
   <div class="section" id="module-integrate_solve_ivp">
 <span id="integrate-solve-ipv"></span><h1>integrate_solve_ipv モジュール<a class="headerlink" href="#module-integrate_solve_ivp" title="このヘッドラインへのパーマリンク">¶</a></h1>
-<p>関数 <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> に対するAPIを提供するモジュールです.
-初期値問題を解く場合には, <a class="reference internal" href="#integrate_solve_ivp.InitialValueProb" title="integrate_solve_ivp.InitialValueProb"><code class="xref py py-class docutils literal notranslate"><span class="pre">InitialValueProb</span></code></a> を利用してください.
-また, integrate.solve_ivpに与える関数のみを得る場合には
-<a class="reference internal" href="#integrate_solve_ivp.Vectorfield" title="integrate_solve_ivp.Vectorfield"><code class="xref py py-class docutils literal notranslate"><span class="pre">Vectorfield</span></code></a> を利用してください.</p>
+<p>これは常微分方程式の初期値問題を数値的に解くためのモジュールです.</p>
+<p>次式で表される問題の解を計算します:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dy</span> <span class="o">/</span> <span class="n">dt</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">y</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span> <span class="o">=</span> <span class="n">y0</span>
+</pre></div>
+</div>
+<p>ただし, t は一次元の独立変数（時間など）, y(t) はn次元のベクトル値関数（状態）を表します.
+n次元のベクトル値関数  f(t, y) により常微分方程式（ベクトル場）が記述されます.
+初期値 y(t0)=y0 が与えられた際の微分方程式の近似解を計算します.</p>
+<p>本モジュールの <a class="reference internal" href="#integrate_solve_ivp.InitialValueProb" title="integrate_solve_ivp.InitialValueProb"><code class="xref py py-class docutils literal notranslate"><span class="pre">InitialValueProb</span></code></a> クラスを利用して初期値問題を構成すれば,
+内部でScipyの関数 <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> が呼び出され,
+数値解を得ることができます.
+なお, ベクトル場 f(t, y)のみを得たい場合には, <a class="reference internal" href="#integrate_solve_ivp.Vectorfield" title="integrate_solve_ivp.Vectorfield"><code class="xref py py-class docutils literal notranslate"><span class="pre">Vectorfield</span></code></a> クラスを利用してください.</p>
+<p><a class="reference internal" href="#integrate_solve_ivp.InitialValueProb" title="integrate_solve_ivp.InitialValueProb"><code class="xref py py-class docutils literal notranslate"><span class="pre">InitialValueProb</span></code></a> クラスの使用例を以下に示します.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sympy</span> <span class="kn">as</span> <span class="nn">sym</span>
+<span class="kn">from</span> <span class="nn">ui_for_scipy</span> <span class="kn">import</span> <span class="n">InitialValueProb</span>
+<span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">()</span>
+<span class="c1">#状態変数の設定</span>
+<span class="n">x1</span><span class="p">,</span><span class="n">x2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;x1,x2&#39;</span><span class="p">)</span>
+<span class="n">ipv</span><span class="o">.</span><span class="n">set_dependent_variables</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">))</span>
+<span class="c1">#ベクトル場の設定</span>
+<span class="n">dxdt</span> <span class="o">=</span> <span class="p">{</span><span class="n">x1</span><span class="p">:</span> <span class="n">x2</span><span class="p">,</span>
+        <span class="n">x2</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">x1</span> <span class="p">}</span>
+<span class="n">ipv</span><span class="o">.</span><span class="n">set_derivative</span><span class="p">(</span><span class="n">dxdt</span><span class="p">)</span>
+<span class="c1">#初期値を設定</span>
+<span class="n">init</span> <span class="o">=</span> <span class="p">{</span><span class="n">x1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">x2</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+<span class="n">ipv</span><span class="o">.</span><span class="n">set_initial_value</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
+<span class="c1">#数値解を計算</span>
+<span class="n">ipv</span><span class="o">.</span><span class="n">set_time_span</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">get_solution</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="class">
 <dt id="integrate_solve_ivp.InitialValueProb">
 <em class="property">class </em><code class="descclassname">integrate_solve_ivp.</code><code class="descname">InitialValueProb</code><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb" title="この定義へのパーマリンク">¶</a></dt>
