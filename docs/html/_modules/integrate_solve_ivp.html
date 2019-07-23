@@ -103,12 +103,19 @@
 <span class="sd">                x2: -2*x1 }　            </span>
 <span class="sd">        func = vf.get_function(dxdt) # ベクトル場を表す関数funcを取得</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">derivative</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># 状態変数の設定</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_dependent_variables</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># 独立変数の設定</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">t</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">Symbol</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;独立変数tはSymbol型で指定してください&#39;</span><span class="p">)</span>  
         
     <span class="k">def</span> <span class="nf">_set_dependent_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -169,8 +176,8 @@
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;def func(t, x):</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;    dxdt = np.zeros_like(x)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dxdt</span><span class="p">)):</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;    dxdt[</span><span class="si">{i}</span><span class="s1">] = </span><span class="si">{deriv[i]}</span><span class="se">\n</span><span class="s1">&#39;</span>  <span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;    return dxdt</span><span class="se">\n</span><span class="s1">&#39;</span>    <span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;    dxdt[</span><span class="si">{i}</span><span class="s1">] = </span><span class="si">{deriv[i]}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;    return dxdt</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span></div>
         <span class="c1"># 書き込んだファイルのチェックを追加予定</span>
     
@@ -178,12 +185,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        変数の対応を表すタプル(variable, x[i])のリストを取得</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 状態変数を置き換えるリスト</span>
         <span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">derivative</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">var_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">):</span>
             <span class="n">var_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">f</span><span class="s1">&#39;x[</span><span class="si">{i}</span><span class="s1">]&#39;</span><span class="p">))</span>
+        <span class="c1"># 独立変数の置き換え</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">:</span>
+            <span class="n">var_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;t&#39;</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">var_list</span></div>
-
     
 <span class="k">class</span> <span class="nc">_TestVectorField</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -198,8 +208,7 @@
         <span class="n">vf</span> <span class="o">=</span> <span class="n">Vectorfield</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">dxdt</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">x</span><span class="p">}</span>        
         <span class="n">fun</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="n">dxdt</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">fun</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">fun</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;f(t=0,y=2) = {fun(0,[2])}&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_2nd_order_liner</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -211,8 +220,7 @@
         <span class="n">dxdt</span> <span class="o">=</span> <span class="p">{</span><span class="n">x1</span><span class="p">:</span> <span class="n">x2</span><span class="p">,</span>
                 <span class="n">x2</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">x1</span><span class="p">}</span>
         <span class="n">fun</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="n">dxdt</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">fun</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">fun</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;f(t=0,y=[2,3]) = {fun(0,[2,3])}&#39;</span><span class="p">)</span> 
         
     <span class="k">def</span> <span class="nf">test_pendurum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -230,9 +238,28 @@
                        <span class="n">omega</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="n">G</span><span class="o">/</span><span class="n">L</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)}</span>
         <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="n">sin</span><span class="p">:</span> <span class="s1">&#39;from numpy import sin&#39;</span><span class="p">}</span>
         <span class="n">fun</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="n">derivatives</span><span class="p">,</span> <span class="n">functions</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;f(t=0,y=[2,3]) = {fun(0,[2,3])}&#39;</span><span class="p">)</span> 
 
-
-
+    <span class="k">def</span> <span class="nf">test_forced_pendurum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dx[1]/dt = x[2], dx[2]/dt = -sin(x[1]) + sin(0.1t)</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-vf forced-pendurum---&#39;</span><span class="p">)</span>
+        <span class="c1"># 変数の設定        </span>
+        <span class="n">theta</span><span class="p">,</span> <span class="n">omega</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;theta, omega&#39;</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+        <span class="n">vf</span> <span class="o">=</span> <span class="n">Vectorfield</span><span class="p">([</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">],</span> <span class="n">t</span><span class="p">)</span>
+        <span class="c1"># ベクトル場の設定</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="mf">9.8</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">sin</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">)</span>
+        <span class="n">derivatives</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta</span><span class="p">:</span> <span class="n">omega</span><span class="p">,</span>
+                       <span class="n">omega</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="n">G</span><span class="o">/</span><span class="n">L</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="p">}</span>
+        <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="n">sin</span><span class="p">:</span> <span class="s1">&#39;from numpy import sin&#39;</span><span class="p">}</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="n">derivatives</span><span class="p">,</span> <span class="n">functions</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;f(t=1,y=[0.0,0.0]) = {fun(t=1.0,x=[0.0,0.0])}&#39;</span><span class="p">)</span>
+        
+        
 <span class="c1">######################################</span>
 <span class="c1"># InitialValueProb class</span>
 <span class="c1">######################################</span>
@@ -274,6 +301,7 @@
 <span class="sd">                                      **options)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t_span</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y0</span> <span class="o">=</span> <span class="p">[]</span>
@@ -303,7 +331,9 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;引数xの要素はSymbol型にしてください&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;引数xはSymbol型ないしそのコンテナにしてください&#39;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;引数xはSymbol型ないしそのコンテナにしてください&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span></div>
 
 <div class="viewcode-block" id="InitialValueProb.set_derivative"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.InitialValueProb.set_derivative">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dxdt</span><span class="p">,</span> <span class="n">functions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -311,9 +341,9 @@
 <span class="sd">        :type dxdt: dict</span>
 <span class="sd">        :arg functions: 関数</span>
 <span class="sd">        </span>
-<span class="sd">        計算する微分方程式\dot{x} = f(x,t)の右辺を設定</span>
+<span class="sd">        計算する微分方程式\dot{x} = f(x,t)の右辺を設定. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">vf</span> <span class="o">=</span> <span class="n">Vectorfield</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">vf</span> <span class="o">=</span> <span class="n">Vectorfield</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="n">dxdt</span><span class="p">,</span> <span class="n">functions</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="InitialValueProb.set_time_span"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.InitialValueProb.set_time_span">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_time_span</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
@@ -418,6 +448,32 @@
         <span class="n">sin</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">)</span>
         <span class="n">derivatives</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta</span><span class="p">:</span> <span class="n">omega</span><span class="p">,</span>
                        <span class="n">omega</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="n">G</span><span class="o">/</span><span class="n">L</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)}</span>
+        <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="n">sin</span><span class="p">:</span> <span class="s1">&#39;from numpy import sin&#39;</span><span class="p">}</span>
+        <span class="n">ipv</span><span class="o">.</span><span class="n">set_derivative</span><span class="p">(</span><span class="n">derivatives</span><span class="p">,</span><span class="n">functions</span><span class="p">)</span>
+        <span class="c1"># 初期値の設定</span>
+        <span class="n">init</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">30.0</span><span class="p">),</span>
+                <span class="n">omega</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">}</span>
+        <span class="n">ipv</span><span class="o">.</span><span class="n">set_initial_value</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
+        <span class="c1"># 数値解の計算</span>
+        <span class="n">ipv</span><span class="o">.</span><span class="n">set_time_span</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">get_solution</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">test_forced_pendurum_ipv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dx[1]/dt = x[2], dx[2]/dt = -sin(x[1]) </span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="c1"># 変数の設定</span>
+        <span class="n">theta</span><span class="p">,</span> <span class="n">omega</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;theta, omega&#39;</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+        <span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">()</span>
+        <span class="n">ipv</span><span class="o">.</span><span class="n">set_dependent_variables</span><span class="p">([</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">],</span> <span class="n">t</span><span class="p">)</span>
+        <span class="c1"># ベクトル場の設定</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="mf">9.8</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">sin</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">)</span>
+        <span class="n">derivatives</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta</span><span class="p">:</span> <span class="n">omega</span><span class="p">,</span>
+                       <span class="n">omega</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="n">G</span><span class="o">/</span><span class="n">L</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)}</span>
         <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="n">sin</span><span class="p">:</span> <span class="s1">&#39;from numpy import sin&#39;</span><span class="p">}</span>
         <span class="n">ipv</span><span class="o">.</span><span class="n">set_derivative</span><span class="p">(</span><span class="n">derivatives</span><span class="p">,</span><span class="n">functions</span><span class="p">)</span>
         <span class="c1"># 初期値の設定</span>

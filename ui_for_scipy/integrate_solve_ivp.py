@@ -47,12 +47,19 @@ class Vectorfield:
                 x2: -2*x1 }　            
         func = vf.get_function(dxdt) # ベクトル場を表す関数funcを取得
     """
-    def __init__(self, x):
+    def __init__(self, x, t=None):
         self.dim = None
         self.derivative = {}
         # 状態変数の設定
         self.x = []
         self._set_dependent_variables(x)
+        # 独立変数の設定
+        self.t = None
+        if t:
+            if isinstance(t, sym.Symbol):
+                self.t = t
+            else: 
+                raise TypeError('独立変数tはSymbol型で指定してください')  
         
     def _set_dependent_variables(self, x):
         """
@@ -113,8 +120,8 @@ class Vectorfield:
             f.write('def func(t, x):\n' )
             f.write('    dxdt = np.zeros_like(x)\n')
             for i in range(len(dxdt)):
-                f.write(f'    dxdt[{i}] = {deriv[i]}\n'  )
-            f.write('    return dxdt\n'    )
+                f.write(f'    dxdt[{i}] = {deriv[i]}\n')
+            f.write('    return dxdt\n')
         return
         # 書き込んだファイルのチェックを追加予定
     
@@ -122,12 +129,15 @@ class Vectorfield:
         """
         変数の対応を表すタプル(variable, x[i])のリストを取得
         """
+        # 状態変数を置き換えるリスト
         x = list(self.derivative.keys())
         var_list = []
         for i in range(self.dim):
             var_list.append((x[i], f'x[{i}]'))
+        # 独立変数の置き換え
+        if self.t:
+            var_list.append((self.t, f't'))
         return var_list
-
     
 class _TestVectorField(unittest.TestCase):
     """
@@ -142,8 +152,7 @@ class _TestVectorField(unittest.TestCase):
         vf = Vectorfield(x)
         dxdt = {x: -x}        
         fun = vf.get_function(dxdt)
-        print(fun)
-        print(fun(0,[2]))
+        print(f'f(t=0,y=2) = {fun(0,[2])}')
 
     def test_2nd_order_liner(self):
         """
@@ -155,8 +164,7 @@ class _TestVectorField(unittest.TestCase):
         dxdt = {x1: x2,
                 x2: -2*x1}
         fun = vf.get_function(dxdt)
-        print(fun)
-        print(fun(0,[2,3])) 
+        print(f'f(t=0,y=[2,3]) = {fun(0,[2,3])}') 
         
     def test_pendurum(self):
         """
@@ -174,9 +182,28 @@ class _TestVectorField(unittest.TestCase):
                        omega: -(G/L)*sin(theta)}
         functions = {sin: 'from numpy import sin'}
         fun = vf.get_function(derivatives, functions)
+        print(f'f(t=0,y=[2,3]) = {fun(0,[2,3])}') 
 
-
-
+    def test_forced_pendurum(self):
+        """
+        dx[1]/dt = x[2], dx[2]/dt = -sin(x[1]) + sin(0.1t)
+        """ 
+        print('-vf forced-pendurum---')
+        # 変数の設定        
+        theta, omega = sym.symbols('theta, omega')
+        t = sym.Symbol('t')
+        vf = Vectorfield([theta, omega], t)
+        # ベクトル場の設定
+        G = 9.8
+        L = 1
+        sin = sym.Function('sin')
+        derivatives = {theta: omega,
+                       omega: -(G/L)*sin(theta) +sin(t) }
+        functions = {sin: 'from numpy import sin'}
+        fun = vf.get_function(derivatives, functions)
+        print(f'f(t=1,y=[0.0,0.0]) = {fun(t=1.0,x=[0.0,0.0])}')
+        
+        
 ######################################
 # InitialValueProb class
 ######################################
@@ -218,6 +245,7 @@ class InitialValueProb:
                                       **options)
         '''
         self.x = []
+        self.t = None
         self.fun = None
         self.t_span = None
         self.y0 = []
@@ -248,6 +276,8 @@ class InitialValueProb:
                     raise TypeError('引数xの要素はSymbol型にしてください')
         else:
             raise TypeError('引数xはSymbol型ないしそのコンテナにしてください')
+        if t:
+            self.t = t
 
     def set_derivative(self, dxdt, functions=None):
         """
@@ -255,9 +285,9 @@ class InitialValueProb:
         :type dxdt: dict
         :arg functions: 関数
         
-        計算する微分方程式\dot{x} = f(x,t)の右辺を設定
+        計算する微分方程式\dot{x} = f(x,t)の右辺を設定. 
         """
-        vf = Vectorfield(self.x)
+        vf = Vectorfield(self.x, self.t)
         self.fun = vf.get_function(dxdt, functions)
         
     def set_time_span(self, init, end):
@@ -362,6 +392,32 @@ class _TestIntialValueProb(unittest.TestCase):
         sin = sym.Function('sin')
         derivatives = {theta: omega,
                        omega: -(G/L)*sin(theta)}
+        functions = {sin: 'from numpy import sin'}
+        ipv.set_derivative(derivatives,functions)
+        # 初期値の設定
+        init = {theta: np.radians(30.0),
+                omega: np.radians(0) }
+        ipv.set_initial_value(init)
+        # 数値解の計算
+        ipv.set_time_span(0,10)
+        sol = ipv.get_solution()
+        self.assertTrue(sol.success)
+        
+    def test_forced_pendurum_ipv(self):
+        """
+        dx[1]/dt = x[2], dx[2]/dt = -sin(x[1]) 
+        """ 
+        # 変数の設定
+        theta, omega = sym.symbols('theta, omega')
+        t = sym.Symbol('t')
+        ipv = InitialValueProb()
+        ipv.set_dependent_variables([theta, omega], t)
+        # ベクトル場の設定
+        G = 9.8
+        L = 1
+        sin = sym.Function('sin')
+        derivatives = {theta: omega,
+                       omega: -(G/L)*sin(theta) + sin(t)}
         functions = {sin: 'from numpy import sin'}
         ipv.set_derivative(derivatives,functions)
         # 初期値の設定
