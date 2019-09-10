@@ -25,7 +25,7 @@ class LinearProg:
         bounds:    
             変数の上下限(lb <= x <= ub)
         """
-        self.x = set()
+        self.x = []
         self.c = []
         self.A_ub = []
         self.b_ub = []
@@ -47,10 +47,20 @@ class LinearProg:
         決定変数を設定するメソッドです. 
         引数には, 
         :py:class:`Symbol <sympy:sympy.core.symbol.Symbol>` オブジェクトを
-        要素に持つタプルを与えてください. 
+        要素に持つシーケンスを与えてください. 
         """
-        self.x = set(x)
-        
+        if isinstance(x, sym.Symbol):
+            self.x = [x]
+        elif hasattr(x, '__iter__'):
+            self.x = []
+            for x_i in x:
+                if isinstance(x_i, sym.Symbol):
+                    self.x.append(x_i)
+                else:
+                    raise TypeError(f'{x}の中身はsym.Symbolにしてください')
+        else:
+            raise TypeError(f'引数にはsympy.Symbolオブジェクトまたはそれを含むシーケンスを与えてください')
+                
     def append_decision_variables(self, x):
         """
         :arg x: 追加する決定変数
@@ -63,15 +73,15 @@ class LinearProg:
         :py:meth:`set_decision_variables` を使用してください. 
         """
         if isinstance(x, sym.Symbol):
-            self.x.add(x)
+            self.x.append(x)
         elif isinstance(x, tuple):
             for x_i in x:
                 if isinstance(x_i, sym.Symbol):
-                    self.x.add(x_i)
+                    self.x.append(x_i)
                 else:
-                    raise TypeError()
+                    raise TypeError(f'{x}の中身はsym.Symbolにしてください')
         else:
-            raise TypeError()
+            raise TypeError(f'引数にはsympy.Symbolオブジェクトまたはそれを含むシーケンスを与えてください')
             
     def set_cost_function(self, min_or_max, f):
         """
@@ -88,21 +98,25 @@ class LinearProg:
         if isinstance(f, sym.Expr):
             pass
         else:
-            raise TypeError()
+            raise TypeError('引数にはsympy.Exprを与えてください')
+            
         if min_or_max == 'min':
             f_canonical = f
+            
         elif min_or_max == 'max':
             f_canonical = -f
         else:
-            raise TypeError()
+            raise ValueError('引数min_or_maxには"min"もしくは"max"を指定してください')
+            
         coeff = f_canonical.as_coefficients_dict()
-        c = []
+        c = []        
         for x_i in self.x:
             if x_i in coeff:
                 c.append(coeff[x_i])
             else:
                 c.append(0)
         self.c = c
+        
     def append_inequality(self, g):
         """
         :param g: 追加する不等式制約
@@ -127,6 +141,7 @@ class LinearProg:
         b = -coeff[1]
         self.A_ub.append(a)
         self.b_ub.append(b)
+
     def append_equality(self, h):
         """
         :param h: 追加する等式制約
@@ -144,6 +159,7 @@ class LinearProg:
             h_canonical = h
         else:
             raise TypeError()
+
         coeff = h_canonical.as_coefficients_dict()
         a = []
         for x_i in self.x:
@@ -152,8 +168,10 @@ class LinearProg:
             else:
                 a.append(0)
         b = -coeff[1]
+
         self.A_eq.append(a)
         self.b_eq.append(b)
+        
     def set_bound(self, x_i, lower, upper):
         """
         :param x_i: 上下限制約を追加する決定変数
@@ -182,25 +200,36 @@ class LinearProg:
         最適化問題の解を得るメソッドです. 
         linprog関数を呼び出して, 最適化問題の解を返します. 
         """
+        if self.A_ub == [] or self.b_ub == []:
+            self.A_ub = None
+            self.b_ub = None
+        if self.A_eq == [] or self.b_eq == []:
+            self.A_eq = None
+            self.b_eq = None
+            
         res = opt.linprog(c=self.c, 
                           A_ub=self.A_ub, b_ub=self.b_ub, 
+                          A_eq=self.A_eq, b_eq=self.b_eq, 
                           bounds=self._get_bounds()
                           )
         return res
 
 
-class _TestLinearProg(unittest.TestCase):
 
+class _TestLinearProg(unittest.TestCase):
+    """
+    LinearProgの単体テスト用のクラスです
+    """
     def test_append_decision_variables(self):
         prog = LinearProg()
         x = sym.Symbol('x')
         prog.append_decision_variables(x)
-        self.assertEqual(prog.x, {x})
+        self.assertEqual(prog.x, [x])
         
         prog = LinearProg()
         x = sym.symbols('x:2')
         prog.append_decision_variables(x)
-        self.assertEqual(prog.x, set(x))
+        self.assertEqual(prog.x, list(x))
         
     def test_set_cost_function(self):
         x1, x2 = sym.symbols('x1, x2')
@@ -218,8 +247,8 @@ class _TestLinearProg(unittest.TestCase):
     def test_append_equality(self):
         x1, x2 = sym.symbols('x1, x2')
         prog = LinearProg([x1, x2])
-        prog.append_equality( 4*x1 + 3*x2 - 24 )
-        self.assertEqual(prog.A_eq, [[4, 3]])
+        prog.append_equality( 5*x1 + 1*x2 - 24 )
+        self.assertEqual(prog.A_eq, [[5, 1]])
         self.assertEqual(prog.b_eq, [24])        
     
     def test_optimization(self):
