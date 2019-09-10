@@ -41,6 +41,15 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">integrate_solve_ipv モジュール</a><ul>
+<li><a class="reference internal" href="#id1">使用例</a></li>
+<li><a class="reference internal" href="#id2">リファレンス</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>前のトピックへ</h4>
   <p class="topless"><a href="modules.html"
                         title="前の章へ">モジュール一覧</a></p>
@@ -89,81 +98,56 @@ n次元のベクトル値関数  f(t, y) により常微分方程式（ベクト
 内部でScipyの関数 <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> が呼び出され,
 数値解を得ることができます.
 なお, ベクトル場 f(t, y)のみを得たい場合には, <a class="reference internal" href="#integrate_solve_ivp.Vectorfield" title="integrate_solve_ivp.Vectorfield"><code class="xref py py-class docutils literal notranslate"><span class="pre">Vectorfield</span></code></a> クラスを利用してください.</p>
-<dl class="class">
-<dt id="integrate_solve_ivp.InitialValueProb">
-<em class="property">class </em><code class="descclassname">integrate_solve_ivp.</code><code class="descname">InitialValueProb</code><span class="sig-paren">(</span><em>y=None</em>, <em>t=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb" title="この定義へのパーマリンク">¶</a></dt>
-<dd><p>常微分方程式の初期値問題を解くためのクラスです. 使用例を以下に示します.</p>
+<div class="section" id="id1">
+<h2>使用例<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>線形定数係数状微分方程式</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sympy</span> <span class="kn">as</span> <span class="nn">sym</span>
 <span class="kn">from</span> <span class="nn">ui_for_scipy</span> <span class="kn">import</span> <span class="n">InitialValueProb</span>
-<span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">()</span>
-<span class="c1">#状態変数の設定</span>
+<span class="c1"># 変数の設定</span>
 <span class="n">x1</span><span class="p">,</span><span class="n">x2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;x1,x2&#39;</span><span class="p">)</span>
-<span class="n">ipv</span><span class="o">.</span><span class="n">set_dependent_variables</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">))</span>
-<span class="c1">#ベクトル場の設定</span>
+<span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">])</span>
+<span class="c1"># ベクトル場の設定</span>
 <span class="n">dxdt</span> <span class="o">=</span> <span class="p">{</span><span class="n">x1</span><span class="p">:</span> <span class="n">x2</span><span class="p">,</span>
         <span class="n">x2</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">x1</span> <span class="p">}</span>
 <span class="n">ipv</span><span class="o">.</span><span class="n">set_derivative</span><span class="p">(</span><span class="n">dxdt</span><span class="p">)</span>
-<span class="c1">#初期値を設定</span>
+<span class="c1"># 初期値の設定</span>
 <span class="n">init</span> <span class="o">=</span> <span class="p">{</span><span class="n">x1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">x2</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
 <span class="n">ipv</span><span class="o">.</span><span class="n">set_initial_value</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
-<span class="c1">#数値解を計算</span>
+<span class="c1"># 数値解の取得</span>
 <span class="n">ipv</span><span class="o">.</span><span class="n">set_time_span</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">sol</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;RK45&#39;</span><span class="p">)</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">get_solution</span><span class="p">()</span>
 </pre></div>
 </div>
-<dl class="method">
-<dt id="integrate_solve_ivp.InitialValueProb.get_solution">
-<code class="descname">get_solution</code><span class="sig-paren">(</span><em>method='RK45'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.get_solution"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.get_solution" title="この定義へのパーマリンク">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">パラメータ:</th><td class="field-body"><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- 数値解を得るアルゴリズム</td>
-</tr>
-</tbody>
-</table>
-<ul class="simple">
-<li>'RK45' (default): Explicit Runge-Kutta method of order 5(4).
-The error is controlled assuming accuracy of the fourth-order
-method, but steps are taken using the fifth-order accurate formula
-(local extrapolation is done). A quartic interpolation polynomial
-is used for the dense output. Can be applied in the complex domain.</li>
-<li>'RK23': Explicit Runge-Kutta method of order 3(2). The error
-is controlled assuming accuracy of the second-order method, but
-steps are taken using the third-order accurate formula (local
-extrapolation is done). A cubic Hermite polynomial is used for the
-dense output. Can be applied in the complex domain.</li>
-<li>'Radau': Implicit Runge-Kutta method of the Radau IIA family of
-order 5. The error is controlled with a third-order accurate
-embedded formula. A cubic polynomial which satisfies the
-collocation conditions is used for the dense output.</li>
-<li>'BDF': Implicit multi-step variable-order (1 to 5) method based
-on a backward differentiation formula for the derivative
-approximation.  A quasi-constant step scheme is used and accuracy is
-enhanced using the NDF modification. Can be applied in the complex
-domain.</li>
-<li>'LSODA': Adams/BDF method with automatic stiffness detection and
-switching. This is a wrapper of the Fortran solver
-from ODEPACK.</li>
-</ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">戻り値:</th><td class="field-body">初期値問題の解</td>
-</tr>
-<tr class="field-even field"><th class="field-name">戻り値の型:</th><td class="field-body"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> の戻り値</td>
-</tr>
-</tbody>
-</table>
-<p>初期値問題の解を得るメソッドです.
-integrate.solve_ivp関数を呼び出して, その戻り値をそのまま返します.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="integrate_solve_ivp.InitialValueProb.set_dependent_variables">
-<code class="descname">set_dependent_variables</code><span class="sig-paren">(</span><em>x</em>, <em>t=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.set_dependent_variables"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.set_dependent_variables" title="この定義へのパーマリンク">¶</a></dt>
+<p>非自励系の場合</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 変数の設定</span>
+<span class="n">theta</span><span class="p">,</span> <span class="n">omega</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;theta, omega&#39;</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+<span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">([</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">],</span> <span class="n">t</span><span class="p">)</span>
+<span class="c1"># ベクトル場の設定</span>
+<span class="n">G</span> <span class="o">=</span> <span class="mf">9.8</span>
+<span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">sin</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">)</span>
+<span class="n">derivatives</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta</span><span class="p">:</span> <span class="n">omega</span><span class="p">,</span>
+               <span class="n">omega</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="n">G</span><span class="o">/</span><span class="n">L</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)}</span>
+<span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="n">sin</span><span class="p">:</span> <span class="s1">&#39;from numpy import sin&#39;</span><span class="p">}</span>
+<span class="n">ipv</span><span class="o">.</span><span class="n">set_derivative</span><span class="p">(</span><span class="n">derivatives</span><span class="p">,</span><span class="n">functions</span><span class="p">)</span>
+<span class="c1"># 初期値の設定</span>
+<span class="n">init</span> <span class="o">=</span> <span class="p">{</span><span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">30.0</span><span class="p">),</span>
+        <span class="n">omega</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">ipv</span><span class="o">.</span><span class="n">set_initial_value</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
+<span class="c1"># 数値解の計算</span>
+<span class="n">ipv</span><span class="o">.</span><span class="n">set_time_span</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;RK23&#39;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>リファレンス<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="class">
+<dt id="integrate_solve_ivp.InitialValueProb">
+<em class="property">class </em><code class="descclassname">integrate_solve_ivp.</code><code class="descname">InitialValueProb</code><span class="sig-paren">(</span><em>y</em>, <em>t=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb" title="この定義へのパーマリンク">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -177,7 +161,24 @@ integrate.solve_ivp関数を呼び出して, その戻り値をそのまま返�
 </tr>
 </tbody>
 </table>
-<p>従属変数を読み込んで次元を設定</p>
+<p>常微分方程式の初期値問題を解くためのクラスです. 使用例を以下に示します.</p>
+<dl class="method">
+<dt id="integrate_solve_ivp.InitialValueProb.get_solution">
+<code class="descname">get_solution</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.get_solution"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.get_solution" title="この定義へのパーマリンク">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">パラメータ:</th><td class="field-body"><strong>kwargs</strong> -- 任意のキーワード引数</td>
+</tr>
+<tr class="field-even field"><th class="field-name">戻り値:</th><td class="field-body">初期値問題の解</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">戻り値の型:</th><td class="field-body"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> の戻り値</td>
+</tr>
+</tbody>
+</table>
+<p>初期値問題の解を得るメソッドです.
+integrate.solve_ivp関数を呼び出して, その戻り値をそのまま返します.</p>
 </dd></dl>
 
 <dl class="method">
@@ -211,11 +212,6 @@ integrate.solve_ivp関数を呼び出して, その戻り値をそのまま返�
 </table>
 <p>初期値を設定するメソッドです.</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="integrate_solve_ivp.InitialValueProb.set_sampling_times">
-<code class="descname">set_sampling_times</code><span class="sig-paren">(</span><em>t_eval</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/integrate_solve_ivp.html#InitialValueProb.set_sampling_times"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#integrate_solve_ivp.InitialValueProb.set_sampling_times" title="この定義へのパーマリンク">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="integrate_solve_ivp.InitialValueProb.set_time_span">
@@ -288,6 +284,7 @@ integrate.solve_ivp関数を呼び出して, その戻り値をそのまま返�
 
 </dd></dl>
 
+</div>
 </div>
 
 

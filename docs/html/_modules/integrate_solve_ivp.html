@@ -71,6 +71,60 @@
 <span class="sd">内部でScipyの関数 :py:func:`scipy:scipy.integrate.solve_ivp` が呼び出され,  </span>
 <span class="sd">数値解を得ることができます. </span>
 <span class="sd">なお, ベクトル場 f(t, y)のみを得たい場合には, :py:class:`Vectorfield` クラスを利用してください. </span>
+
+<span class="sd">使用例</span>
+<span class="sd">------------</span>
+
+<span class="sd">線形定数係数状微分方程式</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    import sympy as sym </span>
+<span class="sd">    from ui_for_scipy import InitialValueProb</span>
+<span class="sd">    # 変数の設定</span>
+<span class="sd">    x1,x2 = sym.symbols(&#39;x1,x2&#39;)</span>
+<span class="sd">    ipv = InitialValueProb([x1,x2])</span>
+<span class="sd">    # ベクトル場の設定</span>
+<span class="sd">    dxdt = {x1: x2,</span>
+<span class="sd">            x2: -2*x1 }</span>
+<span class="sd">    ipv.set_derivative(dxdt)</span>
+<span class="sd">    # 初期値の設定</span>
+<span class="sd">    init = {x1: 1,</span>
+<span class="sd">            x2: 0 }</span>
+<span class="sd">    ipv.set_initial_value(init)</span>
+<span class="sd">    # 数値解の取得</span>
+<span class="sd">    ipv.set_time_span(0,1)</span>
+<span class="sd">    sol = ipv.get_solution()</span>
+
+
+<span class="sd">非自励系の場合</span>
+
+<span class="sd">.. code-block:: python</span>
+<span class="sd"> </span>
+<span class="sd">    # 変数の設定</span>
+<span class="sd">    theta, omega = sym.symbols(&#39;theta, omega&#39;)</span>
+<span class="sd">    t = sym.Symbol(&#39;t&#39;)</span>
+<span class="sd">    ipv = InitialValueProb([theta, omega], t)</span>
+<span class="sd">    # ベクトル場の設定</span>
+<span class="sd">    G = 9.8</span>
+<span class="sd">    L = 1</span>
+<span class="sd">    sin = sym.Function(&#39;sin&#39;)</span>
+<span class="sd">    derivatives = {theta: omega,</span>
+<span class="sd">                   omega: -(G/L)*sin(theta) + sin(t)}</span>
+<span class="sd">    functions = {sin: &#39;from numpy import sin&#39;}</span>
+<span class="sd">    ipv.set_derivative(derivatives,functions)</span>
+<span class="sd">    # 初期値の設定</span>
+<span class="sd">    init = {theta: np.radians(30.0),</span>
+<span class="sd">            omega: np.radians(0) }</span>
+<span class="sd">    ipv.set_initial_value(init)</span>
+<span class="sd">    # 数値解の計算</span>
+<span class="sd">    ipv.set_time_span(0,10)</span>
+<span class="sd">    sol = ipv.get_solution(method=&#39;RK23&#39;)</span>
+<span class="sd">    self.assertTrue(sol.success)</span>
+<span class="sd">   </span>
+<span class="sd">リファレンス</span>
+<span class="sd">------------</span>
+<span class="sd"> </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sympy</span> <span class="k">as</span> <span class="nn">sym</span>
@@ -265,54 +319,28 @@
 <span class="c1">######################################</span>
 <div class="viewcode-block" id="InitialValueProb"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.InitialValueProb">[ドキュメント]</a><span class="k">class</span> <span class="nc">InitialValueProb</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    常微分方程式の初期値問題を解くためのクラスです. 使用例を以下に示します.</span>
-
-<span class="sd">    .. code-block:: python</span>
+<span class="sd">    :arg x: 従属変数（状態変数）</span>
+<span class="sd">    :type x: :py:class:`Symbol &lt;sympy:sympy.core.symbol.Symbol&gt;` or </span>
+<span class="sd">             :py:class:`tuple`</span>
+<span class="sd">    :arg t: 独立変数（時間など）</span>
+<span class="sd">    :type t: :py:class:`Symbol &lt;sympy:sympy.core.symbol.Symbol&gt;` </span>
 <span class="sd">    </span>
-<span class="sd">        import sympy as sym </span>
-<span class="sd">        from ui_for_scipy import InitialValueProb</span>
-<span class="sd">        ipv = InitialValueProb()</span>
-<span class="sd">        #状態変数の設定</span>
-<span class="sd">        x1,x2 = sym.symbols(&#39;x1,x2&#39;)</span>
-<span class="sd">        ipv.set_dependent_variables((x1,x2))</span>
-<span class="sd">        #ベクトル場の設定</span>
-<span class="sd">        dxdt = {x1: x2,</span>
-<span class="sd">                x2: -2*x1 }　</span>
-<span class="sd">        ipv.set_derivative(dxdt)</span>
-<span class="sd">        #初期値を設定</span>
-<span class="sd">        init = {x1: 1,</span>
-<span class="sd">                x2: 0 }</span>
-<span class="sd">        ipv.set_initial_value(init)</span>
-<span class="sd">        #数値解を計算</span>
-<span class="sd">        ipv.set_time_span(0,1)　</span>
-<span class="sd">        sol = ipv.get_solution(method=&#39;RK45&#39;)</span>
+<span class="sd">    常微分方程式の初期値問題を解くためのクラスです. 使用例を以下に示します.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        solve_ivpの使い方:</span>
-<span class="sd">            scipy.integrate.solve_ivp(fun: 微分方程式dy/dt = f(t,y)の右辺, </span>
-<span class="sd">                                      t_span: , </span>
-<span class="sd">                                      y0, </span>
-<span class="sd">                                      method=&#39;RK45&#39;, </span>
-<span class="sd">                                      t_eval=None, </span>
-<span class="sd">                                      dense_output=False, </span>
-<span class="sd">                                      events=None, </span>
-<span class="sd">                                      vectorized=False, </span>
-<span class="sd">                                      **options)</span>
+<span class="sd">        InitialValueProbのコンストラクタ</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">y</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_dependent_variables</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t_span</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y0</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;RK45&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">t_eval</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dense_output</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vectorized</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="InitialValueProb.set_dependent_variables"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.InitialValueProb.set_dependent_variables">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_dependent_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_set_dependent_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :arg x: 従属変数（状態変数）</span>
 <span class="sd">        :type x: :py:class:`Symbol &lt;sympy:sympy.core.symbol.Symbol&gt;` or </span>
@@ -333,7 +361,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;引数xはSymbol型ないしそのコンテナにしてください&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">t</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
 
 <div class="viewcode-block" id="InitialValueProb.set_derivative"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.InitialValueProb.set_derivative">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dxdt</span><span class="p">,</span> <span class="n">functions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -365,48 +393,17 @@
         <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span>
            <span class="bp">self</span><span class="o">.</span><span class="n">y0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y0</span><span class="p">[</span><span class="n">xi</span><span class="p">])</span></div>
         
-<div class="viewcode-block" id="InitialValueProb.set_sampling_times"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.InitialValueProb.set_sampling_times">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">set_sampling_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_eval</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">t_eval</span> <span class="o">=</span> <span class="n">t_eval</span></div>
-        
-<div class="viewcode-block" id="InitialValueProb.get_solution"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.InitialValueProb.get_solution">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">get_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;RK45&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="InitialValueProb.get_solution"><a class="viewcode-back" href="../solve_ivp.html#integrate_solve_ivp.InitialValueProb.get_solution">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">get_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :arg method: 数値解を得るアルゴリズム</span>
-<span class="sd">        :type method: str</span>
-<span class="sd">        </span>
-<span class="sd">        * &#39;RK45&#39; (default): Explicit Runge-Kutta method of order 5(4).</span>
-<span class="sd">          The error is controlled assuming accuracy of the fourth-order</span>
-<span class="sd">          method, but steps are taken using the fifth-order accurate formula</span>
-<span class="sd">          (local extrapolation is done). A quartic interpolation polynomial</span>
-<span class="sd">          is used for the dense output. Can be applied in the complex domain.</span>
-<span class="sd">        * &#39;RK23&#39;: Explicit Runge-Kutta method of order 3(2). The error</span>
-<span class="sd">          is controlled assuming accuracy of the second-order method, but</span>
-<span class="sd">          steps are taken using the third-order accurate formula (local</span>
-<span class="sd">          extrapolation is done). A cubic Hermite polynomial is used for the</span>
-<span class="sd">          dense output. Can be applied in the complex domain.</span>
-<span class="sd">        * &#39;Radau&#39;: Implicit Runge-Kutta method of the Radau IIA family of</span>
-<span class="sd">          order 5. The error is controlled with a third-order accurate</span>
-<span class="sd">          embedded formula. A cubic polynomial which satisfies the</span>
-<span class="sd">          collocation conditions is used for the dense output.</span>
-<span class="sd">        * &#39;BDF&#39;: Implicit multi-step variable-order (1 to 5) method based</span>
-<span class="sd">          on a backward differentiation formula for the derivative</span>
-<span class="sd">          approximation.  A quasi-constant step scheme is used and accuracy is</span>
-<span class="sd">          enhanced using the NDF modification. Can be applied in the complex</span>
-<span class="sd">          domain.</span>
-<span class="sd">        * &#39;LSODA&#39;: Adams/BDF method with automatic stiffness detection and</span>
-<span class="sd">          switching. This is a wrapper of the Fortran solver</span>
-<span class="sd">          from ODEPACK.</span>
+<span class="sd">        :arg kwargs: 任意のキーワード引数</span>
 <span class="sd">        </span>
 <span class="sd">        :return: 初期値問題の解</span>
 <span class="sd">        :rtype:  :py:func:`scipy:scipy.integrate.solve_ivp` の戻り値</span>
 <span class="sd">        </span>
 <span class="sd">        初期値問題の解を得るメソッドです. </span>
 <span class="sd">        integrate.solve_ivp関数を呼び出して, その戻り値をそのまま返します. </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">method</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
-        <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fun</span><span class="p">,</span> <span class="n">t_span</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t_span</span><span class="p">,</span> <span class="n">y0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span>
-                        <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> 
-                        <span class="n">t_eval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t_eval</span><span class="p">)</span>
+<span class="sd">    &quot;&quot;&quot;</span>            
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_span</span><span class="p">,</span> <span class="n">y0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sol</span>        </div></div>
 
 
@@ -421,16 +418,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># 変数の設定</span>
         <span class="n">x1</span><span class="p">,</span><span class="n">x2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;x1,x2&#39;</span><span class="p">)</span>
-        <span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">()</span>
-        <span class="n">ipv</span><span class="o">.</span><span class="n">set_dependent_variables</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">))</span> 
+        <span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">])</span>
         <span class="c1"># ベクトル場の設定</span>
         <span class="n">dxdt</span> <span class="o">=</span> <span class="p">{</span><span class="n">x1</span><span class="p">:</span> <span class="n">x2</span><span class="p">,</span>
                 <span class="n">x2</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">x1</span> <span class="p">}</span>
         <span class="n">ipv</span><span class="o">.</span><span class="n">set_derivative</span><span class="p">(</span><span class="n">dxdt</span><span class="p">)</span>
-        <span class="n">ipv</span><span class="o">.</span><span class="n">set_time_span</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># 初期値の設定</span>
         <span class="n">init</span> <span class="o">=</span> <span class="p">{</span><span class="n">x1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="n">x2</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
         <span class="n">ipv</span><span class="o">.</span><span class="n">set_initial_value</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
+        <span class="c1"># 数値解の取得</span>
+        <span class="n">ipv</span><span class="o">.</span><span class="n">set_time_span</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">sol</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">get_solution</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
 
@@ -440,8 +438,7 @@
 <span class="sd">        &quot;&quot;&quot;</span> 
         <span class="c1"># 変数の設定</span>
         <span class="n">theta</span><span class="p">,</span> <span class="n">omega</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;theta, omega&#39;</span><span class="p">)</span>
-        <span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">()</span>
-        <span class="n">ipv</span><span class="o">.</span><span class="n">set_dependent_variables</span><span class="p">([</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">])</span>
+        <span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">([</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">])</span>
         <span class="c1"># ベクトル場の設定</span>
         <span class="n">G</span> <span class="o">=</span> <span class="mf">9.8</span>
         <span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
@@ -466,8 +463,7 @@
         <span class="c1"># 変数の設定</span>
         <span class="n">theta</span><span class="p">,</span> <span class="n">omega</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;theta, omega&#39;</span><span class="p">)</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
-        <span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">()</span>
-        <span class="n">ipv</span><span class="o">.</span><span class="n">set_dependent_variables</span><span class="p">([</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">],</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">ipv</span> <span class="o">=</span> <span class="n">InitialValueProb</span><span class="p">([</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">],</span> <span class="n">t</span><span class="p">)</span>
         <span class="c1"># ベクトル場の設定</span>
         <span class="n">G</span> <span class="o">=</span> <span class="mf">9.8</span>
         <span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
@@ -482,7 +478,7 @@
         <span class="n">ipv</span><span class="o">.</span><span class="n">set_initial_value</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
         <span class="c1"># 数値解の計算</span>
         <span class="n">ipv</span><span class="o">.</span><span class="n">set_time_span</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
-        <span class="n">sol</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">get_solution</span><span class="p">()</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;RK23&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
         
 
