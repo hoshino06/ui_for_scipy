@@ -74,7 +74,7 @@ class LinearProg:
         """
         if isinstance(x, sym.Symbol):
             self.x.append(x)
-        elif isinstance(x, tuple):
+        elif hasattr(x, '__iter__'):
             for x_i in x:
                 if isinstance(x_i, sym.Symbol):
                     self.x.append(x_i)
