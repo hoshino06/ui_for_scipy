@@ -15,6 +15,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" /> 
   </head><body>
@@ -55,10 +56,6 @@
             
   <h1>optimize_linprog のソースコード</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">関数 :py:func:`scipy:scipy.optimize.linprog` に対するAPIを提供するモジュールです. </span>
-<span class="sd">下記の :py:class:`LinearProg` クラスを使用してください. </span>
-<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">opt</span>
 <span class="kn">import</span> <span class="nn">sympy</span> <span class="k">as</span> <span class="nn">sym</span>
 <span class="kn">import</span> <span class="nn">unittest</span>

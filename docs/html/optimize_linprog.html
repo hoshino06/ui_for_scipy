@@ -15,6 +15,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="検索" href="search.html" />
     <link rel="prev" title="integrate_solve_ipv モジュール" href="solve_ivp.html" /> 
@@ -37,6 +38,16 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">optimize_linprog モジュール</a><ul>
+<li><a class="reference internal" href="#linprog">linprog関数を直接使う場合</a></li>
+<li><a class="reference internal" href="#id2">本モジュールの使用例</a></li>
+<li><a class="reference internal" href="#module-optimize_linprog">リファレンス</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>前のトピックへ</h4>
   <p class="topless"><a href="solve_ivp.html"
                         title="前の章へ">integrate_solve_ipv モジュール</a></p>
@@ -67,10 +78,87 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-optimize_linprog">
-<span id="optimize-linprog"></span><h1>optimize_linprog モジュール<a class="headerlink" href="#module-optimize_linprog" title="このヘッドラインへのパーマリンク">¶</a></h1>
-<p>関数 <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html#scipy.optimize.linprog" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.optimize.linprog()</span></code></a> に対するAPIを提供するモジュールです.
-下記の <a class="reference internal" href="#optimize_linprog.LinearProg" title="optimize_linprog.LinearProg"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinearProg</span></code></a> クラスを使用してください.</p>
+  <div class="section" id="optimize-linprog">
+<h1>optimize_linprog モジュール<a class="headerlink" href="#optimize-linprog" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>これは線形計画問題(Linear Programming)の数値解を得るためのモジュールです.</p>
+<p>scipyには <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html#scipy.optimize.linprog" title="(in SciPy v1.3.0)"><code class="docutils literal notranslate"><span class="pre">scipy.optimize.linprog()</span></code></a> という関数が用意されており,
+これを使うことで線形計画問題の最適解を得ることができます.
+本モジュールの目的はこの関数をより簡単に扱えるようにすることです.</p>
+<p>また, このモジュールを少し修正することで他の関数(ソルバー)を使うこともできます.</p>
+<div class="section" id="linprog">
+<h2>linprog関数を直接使う場合<a class="headerlink" href="#linprog" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>まず, scipyのlinprog関数を直接使う場合の例を示します.
+ここでは例題として以下の問題(玉置,2005)を考えます.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+&amp;\max_{x_1, x_2} &amp; f = 28 x_1 + 14 x_2 \quad \\
+&amp;\mathrm{subject} \, \mathrm{to} &amp; 4 x_1 + 3 x_2 \le 24  \quad \\
+&amp; &amp; 2 x_1 + x_2 \le 10  \quad \\
+&amp; &amp; x_1, x_2 \ge 0  \quad
+\end{align}\end{split}\]</div>
+<p>関数linprogにより最適解を得るためには, 問題の行列表現を表すリスト(1D arrayや2D array)を作る必要があります.
+具体的には下記のようなコードとなります
+(<a class="reference external" href="https://gist.github.com/hoshino06/d407a6093556d5b0b28d4d8c8cf5c5fa">ダウンロードはこちら</a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># scipyのoptimizeパッケージを読み込み</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="kn">as</span> <span class="nn">opt</span>
+
+<span class="c1"># 関数linprogに渡す引数を定義 (最適化問題を表す行列を作成)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">28</span><span class="p">,</span> <span class="o">-</span><span class="mi">16</span><span class="p">]</span>
+<span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">24</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+<span class="n">x0_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">x1_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">x0_bounds</span><span class="p">,</span> <span class="n">x1_bounds</span><span class="p">]</span>
+
+<span class="c1"># scipy.optimize(opt)のlinprog関数を使って最適化問題の解(res)を取得</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">linprog</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">A_ub</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">b_ub</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+
+<span class="c1"># 結果を表示</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;fmax = {-res.fun}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;x1 = {res.x[0]}, x2 = {res.x[1]}&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>本モジュールの使用例<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>上記の例で示したようにlinprog関数を使用するためには最適化問題を記述する行列(リスト)を作成する必要があります.
+この作業は簡単な例であれば手間ではありませんが, 扱う問題がより大規模なものだと大変です.
+本モジュールでは目的関数や制約条件をsympyの代数表現として与えると行列を自動生成してlinprog関数に与えてくれます.</p>
+<p>以下にコードの例を示します
+(<a class="reference external" href="https://gist.github.com/hoshino06/df0f24df3d4333096ff10920fc7870b7">ダウンロードはこちら</a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># optimize_linprogモジュールを読み込み</span>
+<span class="kn">import</span> <span class="nn">ui_for_scipy.optimize_linprog</span>  <span class="kn">as</span> <span class="nn">opt</span>
+
+<span class="c1"># sympyパッケージの読み込み</span>
+<span class="kn">import</span> <span class="nn">sympy</span> <span class="kn">as</span> <span class="nn">sym</span>
+
+<span class="c1"># sympyパッケージのsymbols関数を利用して, x1およびx2という変数(Symbol)を定義</span>
+<span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;x1, x2&#39;</span><span class="p">)</span>
+
+<span class="c1"># オブジェクトobj_linprogを作成</span>
+<span class="c1"># (obj_linprogは, optimize_linprog_minimal.pyに定義されたLinProgクラスのオブジェクト)</span>
+<span class="n">obj_linprog</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">LinearProg</span><span class="p">()</span>
+
+<span class="c1"># obj_linprogに付随するメソッドを利用して, 最適化問題を定義</span>
+<span class="c1"># (この部分が読みやすくなっている)</span>
+<span class="n">obj_linprog</span><span class="o">.</span><span class="n">set_decision_variables</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">))</span>
+<span class="n">obj_linprog</span><span class="o">.</span><span class="n">set_cost_function</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="mi">28</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="mi">16</span><span class="o">*</span><span class="n">x2</span><span class="p">)</span>
+<span class="n">obj_linprog</span><span class="o">.</span><span class="n">append_inequality</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x2</span> <span class="o">&lt;=</span> <span class="mi">24</span><span class="p">)</span>
+<span class="n">obj_linprog</span><span class="o">.</span><span class="n">append_inequality</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span>   <span class="n">x2</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">obj_linprog</span><span class="o">.</span><span class="n">set_bound</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">obj_linprog</span><span class="o">.</span><span class="n">set_bound</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+<span class="c1"># 最適化問題の解(res)を取得</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">obj_linprog</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span>
+
+<span class="c1"># 結果を表示</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;fmax = {-res.fun}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;x1 = {res.x[0]}, x2 = {res.x[1]}&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-optimize_linprog">
+<span id="id4"></span><h2>リファレンス<a class="headerlink" href="#module-optimize_linprog" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <dl class="class">
 <dt id="optimize_linprog.LinearProg">
 <em class="property">class </em><code class="descclassname">optimize_linprog.</code><code class="descname">LinearProg</code><span class="sig-paren">(</span><em>x=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/optimize_linprog.html#LinearProg"><span class="viewcode-link">[ソース]</span></a><a class="headerlink" href="#optimize_linprog.LinearProg" title="この定義へのパーマリンク">¶</a></dt>
@@ -206,6 +294,7 @@ linprog関数を呼び出して, 最適化問題の解を返します.</p>
 
 </dd></dl>
 
+</div>
 </div>
 
 

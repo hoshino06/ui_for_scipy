@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-関数 :py:func:`scipy:scipy.optimize.linprog` に対するAPIを提供するモジュールです. 
-下記の :py:class:`LinearProg` クラスを使用してください. 
-"""
 import scipy.optimize as opt
 import sympy as sym
 import unittest
