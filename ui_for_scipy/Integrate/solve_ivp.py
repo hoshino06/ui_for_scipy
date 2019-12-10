@@ -244,14 +244,18 @@ class InitialValueProb:
         """
         if isinstance(x, sym.Symbol):
             self.x.append(x)
+            
         elif hasattr(x, "__iter__"):
+            
             for x_i in x:
                 if isinstance(x_i, sym.Symbol):
                     self.x.append(x_i)
                 else:
                     raise TypeError('引数xの要素はSymbol型にしてください')
+        
         else:
             raise TypeError('引数xはSymbol型ないしそのコンテナにしてください')
+        
         if t:
             self.t = t
 
@@ -300,3 +304,21 @@ class InitialValueProb:
         self.solution = sol
         return sol
 
+    def get_timecourse(self, variable):
+        """
+        指定した変数の時系列データを取り出します. 
+        """
+        var_idx = self.x.index(variable)
+        timecourse = self.solution.y[var_idx]
+        
+        return timecourse
+        
+    def get_lastvalue(self, variable=None):
+        """
+        計算した解の最後の値を返します
+        """
+        if variable is None:
+            
+            return self.solution.y[:,-1]
+        
+        

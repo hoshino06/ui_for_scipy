@@ -13,7 +13,7 @@ import unittest
 #############################################################
 # Vectorfieldクラス
 #############################################################
-class TestVectorField(unittest.TestCase):
+class Test1_VectorField(unittest.TestCase):
     """
     class:Vectorfield のユニットテスト用のクラス
     """
@@ -99,9 +99,9 @@ class TestVectorField(unittest.TestCase):
 
 
 #############################################################
-# Vectorfieldクラス
+# InitialValueProbクラス: 解を計算するまでの部分
 #############################################################
-class TestIntialValueProb(unittest.TestCase):
+class Test2_IntialValueProb(unittest.TestCase):
     """
     InitialValuProbのユニットテスト用のクラス
     """    
@@ -175,6 +175,45 @@ class TestIntialValueProb(unittest.TestCase):
         sol = ipv.get_solution(method='RK23')
         self.assertTrue(sol.success)
         
+
+#############################################################
+# InitialValueProbクラス: 解を計算してからの部分
+#############################################################
+class Test3_IntialValueProbPostCal(unittest.TestCase):
+    """
+    InitialValuProbのユニットテスト用のクラス
+    """    
+    # 変数の設定
+    theta, omega = sym.symbols('theta, omega')
+    t = sym.Symbol('t')
+    ipv = InitialValueProb([theta, omega], t)
+    # ベクトル場の設定
+    G = 9.8
+    L = 1
+    sin = sym.Function('sin')
+    derivatives = {theta: omega,
+                   omega: -(G/L)*sin(theta) + sin(t)}
+    functions = {sin: 'from numpy import sin'}
+    ipv.set_derivative(derivatives,functions)
+    # 初期値の設定
+    init = {theta: np.radians(30.0),
+            omega: np.radians(0) }
+    ipv.set_initial_value(init)
+    # 数値解の計算
+    ipv.set_time_span(0,10)
+    ipv.get_solution(method='RK23')
+    
+    def test_last_value(self):
+        """
+        最終の値を得るためのメソッド
+        """
+        print('-ivp_post: last value---')
+        last_bymethod = self.ipv.get_lastvalue()
+        last_bymanual = self.ipv.solution.y[:,-1]
+        self.assertTrue( (last_bymethod==last_bymanual).all() )
+        print(f'last value = {last_bymethod}')
+        #print(self.ipv.solution.y)
+
 
 if __name__ == '__main__':     
     unittest.main()

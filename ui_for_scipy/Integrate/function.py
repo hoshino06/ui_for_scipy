@@ -4,6 +4,5 @@ from numpy import sin
 def func(t, x):
     dxdt = np.zeros_like(x)
     dxdt[0] = x[1]
-    dxdt[1] = -x[2]*sin(x[0])
-    dxdt[2] = 5.00000000000000
+    dxdt[1] = -9.8*sin(x[0])
     return dxdt
