@@ -186,7 +186,7 @@ class Test3_IntialValueProbPostCal(unittest.TestCase):
     # 変数の設定
     theta, omega = sym.symbols('theta, omega')
     t = sym.Symbol('t')
-    ipv = InitialValueProb([theta, omega], t)
+    ivp = InitialValueProb([theta, omega], t)
     # ベクトル場の設定
     G = 9.8
     L = 1
@@ -194,26 +194,39 @@ class Test3_IntialValueProbPostCal(unittest.TestCase):
     derivatives = {theta: omega,
                    omega: -(G/L)*sin(theta) + sin(t)}
     functions = {sin: 'from numpy import sin'}
-    ipv.set_derivative(derivatives,functions)
+    ivp.set_derivative(derivatives,functions)
     # 初期値の設定
     init = {theta: np.radians(30.0),
             omega: np.radians(0) }
-    ipv.set_initial_value(init)
+    ivp.set_initial_value(init)
     # 数値解の計算
-    ipv.set_time_span(0,10)
-    ipv.get_solution(method='RK23')
+    ivp.set_time_span(0,10)
+    ivp.get_solution(method='RK23')
     
     def test_last_value(self):
         """
         最終の値を得るためのメソッド
         """
         print('-ivp_post: last value---')
-        last_bymethod = self.ipv.get_lastvalue()
-        last_bymanual = self.ipv.solution.y[:,-1]
+        last_bymethod = self.ivp.get_lastvalue()
+        last_bymanual = self.ivp.solution.y[:,-1]
         self.assertTrue( (last_bymethod==last_bymanual).all() )
         print(f'last value = {last_bymethod}')
-        #print(self.ipv.solution.y)
+        #print(self.ivp.solution.y)
 
+    def test_lastvalue_bydict(self):
+        """
+        最終の値を得るためのメソッド
+        """
+        print('-ivp_post: last value by dict---')
+        
+        last_bydict = self.ivp.get_lastvalue_bydict()
+        print(f'last value = {last_bydict}')
+        
+        last_bylist = [last_bydict[x] for x in self.ivp.x] 
+        last_bymanual = self.ivp.solution.y[:,-1]
+        self.assertTrue( (last_bylist==last_bymanual).all() )
+        
 
 if __name__ == '__main__':     
     unittest.main()

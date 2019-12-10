@@ -321,4 +321,14 @@ class InitialValueProb:
             
             return self.solution.y[:,-1]
         
+    def get_lastvalue_bydict(self):
+        """
+        計算した解の最後の値を辞書型オブジェクトとして返します
+        """
+        lastvalue = {}
+        for x in self.x:
+            x_idx = self.x.index(x)            
+            lastvalue[x] = self.solution.y[x_idx,-1]
+        return lastvalue
+
         
