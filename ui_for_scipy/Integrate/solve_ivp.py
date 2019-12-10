@@ -140,9 +140,22 @@ class Vectorfield:
         """
         # 引数チェック
         if isinstance(dxdt, dict):
+            # dxdtが辞書型の場合
+            for variable in dxdt:
+
+                if isinstance(dxdt[variable], sym.Expr):
+                    pass
+                else:
+                    try:
+                        dxdt[variable] = sym.Number(dxdt[variable])
+                    except:
+                        raise TypeError(f'引数dxdt内の{variable}の値が不正です')
+                        
+            # チェックOK => self.derivativeに格納
             self.derivative = dxdt
+
         else:
-            raise TypeError()
+            raise TypeError('引数dxdtには辞書型オブジェクトをあたえてください')
             
         # 関数をファイルに書き込み
         self.write_function('function.py', dxdt, func)
@@ -281,7 +294,9 @@ class InitialValueProb:
         
         初期値問題の解を得るメソッドです. 
         integrate.solve_ivp関数を呼び出して, その戻り値をそのまま返します. 
-    """            
+        その結果はself.solutionに格納されます
+        """            
         sol = solve_ivp(self.fun, self.t_span, y0=self.y0, **kwargs)
-        return sol        
+        self.solution = sol
+        return sol
 

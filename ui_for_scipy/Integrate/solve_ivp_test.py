@@ -10,7 +10,9 @@ import numpy as np
 import sympy as sym
 import unittest
 
-
+#############################################################
+# Vectorfieldクラス
+#############################################################
 class TestVectorField(unittest.TestCase):
     """
     class:Vectorfield のユニットテスト用のクラス
@@ -19,7 +21,7 @@ class TestVectorField(unittest.TestCase):
         """
         dx/dt = -x
         """
-        print('-vf 1st order---')
+        print('\n-vf 1st order---')
         x = sym.Symbol('x')
         vf = Vectorfield(x)
         dxdt = {x: -x}        
@@ -38,8 +40,9 @@ class TestVectorField(unittest.TestCase):
         fun = vf.get_function(dxdt)
         print(f'f(t=0,y=[2,3]) = {fun(0,[2,3])}') 
         
-    def test_pendurum(self):
+    def test_3_pendurum(self):
         """
+        関数を含む場合のテストです. 
         dx[1]/dt = x[2], dx[2]/dt = -sin(x[1]) 
         """ 
         print('-vf pendurum---')
@@ -56,8 +59,9 @@ class TestVectorField(unittest.TestCase):
         fun = vf.get_function(derivatives, functions)
         print(f'f(t=0,y=[2,3]) = {fun(0,[2,3])}') 
 
-    def test_forced_pendurum(self):
+    def test_4_forced_pendurum(self):
         """
+        非自励系のテストです. 
         dx[1]/dt = x[2], dx[2]/dt = -sin(x[1]) + sin(0.1t)
         """ 
         print('-vf forced-pendurum---')
@@ -75,7 +79,28 @@ class TestVectorField(unittest.TestCase):
         fun = vf.get_function(derivatives, functions)
         print(f'f(t=1,y=[0.0,0.0]) = {fun(t=1.0,x=[0.0,0.0])}')
        
+    def test_5_parametric_pendurum(self):
+        """
+        ベクトル場の設定に0(int型などの数値型)が含まれる場合のテストです. 
+        dx[1]/dt = x[2], dx[2]/dt = -K*sin(x[1]) 
+        """ 
+        print('-vf parametric pendurum---')
+        # 変数の設定
+        theta, omega, K = sym.symbols('theta, omega, K')
+        vf = Vectorfield([theta, omega, K])
+        # ベクトル場の設定
+        sin = sym.Function('sin')
+        derivatives = {theta: omega,
+                       omega: -K*sin(theta),
+                       K    : 5.0 }
+        functions = {sin: 'from numpy import sin'}
+        fun = vf.get_function(derivatives, functions)
+        print(f'f(t=0,y=[2,3,1]) = {fun(0,[2,3,1])}')
 
+
+#############################################################
+# Vectorfieldクラス
+#############################################################
 class TestIntialValueProb(unittest.TestCase):
     """
     InitialValuProbのユニットテスト用のクラス
