@@ -206,7 +206,8 @@ class LinearProg:
         res = opt.linprog(c=self.c, 
                           A_ub=self.A_ub, b_ub=self.b_ub, 
                           A_eq=self.A_eq, b_eq=self.b_eq, 
-                          bounds=self._get_bounds()
+                          bounds=self._get_bounds(),
+                          method=self.method
                           )
         return res
 

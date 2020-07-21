@@ -199,10 +199,10 @@ class Vectorfield:
         # 状態変数を置き換えるリスト
         var_list = []
         for i in range(self.dim):
-            var_list.append((self.x[i], f'x[{i}]'))
+            var_list.append( (self.x[i], sym.Symbol(f'x[{i}]')) )
         # 独立変数の置き換え
         if self.t:
-            var_list.append((self.t, f't'))
+            var_list.append( (self.t, sym.Symbol('t')) )
         return var_list
  
         
@@ -230,7 +230,6 @@ class InitialValueProb:
         self.fun = None
         self.t_span = None
         self.y0 = []
-
 
     def _set_dependent_variables(self, x, t=None):
         """
@@ -286,6 +285,7 @@ class InitialValueProb:
         
         初期値を設定するメソッドです. 
         """
+        self.y0 = []
         for xi in self.x:
            self.y0.append(y0[xi])
         
